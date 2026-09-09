@@ -5,6 +5,21 @@ LOG_DIR="${ROOT_DIR}"/logs
 WORKLOAD_DIR="${ROOT_DIR}"/workloads
 YCSB_BIN="${ROOT_DIR}"/YCSB/bin/ycsb.sh
 
+# Where the deployed shared libraries live, relative to this checkout.
+#
+# Set here rather than in the experiment scripts because scripts/invoker.sh
+# sources this file *inside the tmux window on the worker*, which is the only
+# place it can take effect. The per-experiment `export LD_LIBRARY_PATH=...`
+# lines cannot work: they run on the gateway, and remote-invoker.sh forwards
+# only DORY_REGISTRY_IP over ssh. (They also point at "/bin/chimera/..." with a
+# leading slash, from fix-build.sh interpolating an unset BASE_DIR.)
+#
+# prepare-deployment.sh ships bin/disco-skip/.deps/, so this is where the libs
+# land on every worker. Build type is fixed to relwithdebinfo to match what
+# build.py produces.
+DEPS_LIB_DIR="${ROOT_DIR}/bin/disco-skip/.deps/gcc/relwithdebinfo/lib"
+export LD_LIBRARY_PATH="${DEPS_LIB_DIR}${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+
 TMUX_SESSION=oops
 
 FIRST_MACHINE=1
