@@ -5,22 +5,24 @@ LOG_DIR="${ROOT_DIR}"/logs
 WORKLOAD_DIR="${ROOT_DIR}"/workloads
 YCSB_BIN="${ROOT_DIR}"/YCSB/bin/ycsb.sh
 
-# Where the deployed shared libraries live, relative to this checkout.
-#
-# Set here rather than in the experiment scripts because scripts/invoker.sh
-# sources this file *inside the tmux window on the worker*, which is the only
-# place it can take effect. The per-experiment `export LD_LIBRARY_PATH=...`
-# lines cannot work: they run on the gateway, and remote-invoker.sh forwards
-# only DORY_REGISTRY_IP over ssh. (They also point at "/bin/chimera/..." with a
-# leading slash, from fix-build.sh interpolating an unset BASE_DIR.)
-#
-# prepare-deployment.sh ships bin/disco-skip/.deps/, so this is where the libs
-# land on every worker. Build type is fixed to relwithdebinfo to match what
-# build.py produces.
-DEPS_LIB_DIR="${ROOT_DIR}/bin/disco-skip/.deps/gcc/relwithdebinfo/lib"
-export LD_LIBRARY_PATH="${DEPS_LIB_DIR}${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+# No LD_LIBRARY_PATH is set on purpose. conanfile.py builds with shared=False,
+# so the binaries link the dory stack statically and `ldd` reports nothing
+# missing -- there is no .deps/gcc/*/lib directory to point at. The
+# `export LD_LIBRARY_PATH=/bin/chimera/...` lines at the top of experiments/*.sh
+# are dead weight twice over: that path has a spurious leading slash (from
+# fix-build.sh interpolating an unset BASE_DIR), and they run on the gateway
+# while remote-invoker.sh forwards only DORY_REGISTRY_IP over ssh.
 
 TMUX_SESSION=oops
+
+# The memcached registry gets its own tmux session, separate from the one the
+# experiment windows live in. memc.sh used to kill and recreate $TMUX_SESSION,
+# which on the registry machine destroyed the session setup-all-tmux.sh had just
+# made -- and because killing the last session kills the tmux server, that also
+# discarded the global `remain-on-exit on`. On that one machine a window then
+# vanished the instant its command finished, so a crashed run left no pane to
+# read. Splitting the sessions removes the interaction entirely.
+REGISTRY_SESSION=${TMUX_SESSION}-registry
 
 FIRST_MACHINE=1
 FIRST_SERVER=$FIRST_MACHINE

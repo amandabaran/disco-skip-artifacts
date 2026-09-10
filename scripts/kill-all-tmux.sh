@@ -6,5 +6,7 @@ source "$SCRIPT_DIR"/config.sh
 for i in $(seq $FIRST_MACHINE $(($FIRST_MACHINE + $MACHINE_COUNT - 1))); do
     MACHINE=$(machine2ssh machine$i)
     ssh -o LogLevel=QUIET -t $MACHINE \
-        "tmux kill-session -t $TMUX_SESSION"
+        "tmux kill-session -t $TMUX_SESSION 2>/dev/null; \
+         tmux kill-session -t $REGISTRY_SESSION 2>/dev/null; \
+         true"
 done
