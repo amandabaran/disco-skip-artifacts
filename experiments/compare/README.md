@@ -22,6 +22,34 @@ flatter us by a large factor and measure nothing about either system, so E goes
 to dLSM, which is a real LSM tree with a real iterator
 (`dLSM/benchmarks/ycsbc.cc:357`).
 
+## Paper numbers need 3 runs averaged — this harness does 1
+
+**Every table and figure produced from a single invocation is n=1 and is not
+publishable.** Run the sweep three times and average; report the spread.
+
+This is not a formality. Measured run-to-run variation on identical
+configurations, comparing two back-to-back sweeps at 3 servers / 1 client /
+100k ops:
+
+| arm | run 1 | run 2 | delta |
+|---|---|---|---|
+| workload A, disco-skip cache-on | 101 | 107 | +6% |
+| workload A, disco-skip cache-off | 34 | 35 | +3% |
+| workload A, swarm-kv | 150 | 151 | +0.7% |
+| workload A, fusee | 114 | 112 | −1.8% |
+
+So the noise floor is roughly **±6% on our arms** and tighter on the others.
+Any gap smaller than that is not a result: the first sweep showed swarm-kv
+ahead of us by 4% on workload D, which is inside the noise and must not be
+reported as a loss. Conversely the B and C margins (11–20%) survive it
+comfortably.
+
+Three runs is the minimum that lets you quote a mean with a visible spread.
+Use `REPEATS=3`, which writes each repetition to its own results directory and
+leaves `summarize.py` to aggregate them; pass several CSVs to
+`summarize.py` and it reports mean ± half-range across them rather than a
+single number.
+
 ## Three traps this harness exists to avoid
 
 **1. The systems do not report throughput in the same units.**
