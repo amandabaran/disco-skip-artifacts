@@ -48,19 +48,42 @@ machine10=w10
 machine11=w11
 machine12=w12
 
-# Set fqdn names of the machines (use `hostname -f`)
-machine1hostname=swarm-${machine1}
-machine2hostname=swarm-${machine2}
-machine3hostname=swarm-${machine3}
-machine4hostname=swarm-${machine4}
-machine5hostname=swarm-${machine5}
-machine6hostname=swarm-${machine6}
-machine7hostname=swarm-${machine7}
-machine8hostname=swarm-${machine8}
-machine9hostname=swarm-${machine9}
-machine10hostname=swarm-${machine10}
-machine11hostname=swarm-${machine11}
-machine12hostname=swarm-${machine12}
+# Experiment-LAN addresses of the machines.
+#
+# These were `swarm-${machineN}`, which is a name that exists only in
+# /etc/hosts. CloudLab's node watchdog re-syncs /etc/hosts from the testbed
+# database on a ~10-15 minute cron and discards local additions, so
+# update_hosts_file.sh had to be re-run before every experiment and the
+# resolution would break again mid-session. The symptom is not a DNS error: it
+# is a memcached failure from inside the binary,
+#
+#   Failed to set to the store the (K, V) = (qp-2-for-1, ...)
+#   (SERVER HAS FAILED AND IS DISABLED UNTIL TIMED RETRY)
+#
+# which reads as a dead registry rather than an unresolvable name.
+#
+# Only DORY_REGISTRY_IP ever consumed these (via machine2hostname, below), and
+# dory takes an IP perfectly well. The 10.10.1.x experiment-LAN addresses are
+# assigned by the testbed profile and stable for the lifetime of the
+# experiment, and a value set here ships with the deployment, where the
+# watchdog cannot undo it. Verified from w5: 10.10.1.1:11211 answers `version`
+# while `swarm-w1` does not resolve.
+#
+# The mapping is wN -> 10.10.1.N. If the profile is ever re-instantiated with a
+# different address plan, re-collect it with:
+#   for h in w1 .. w12; do ssh $h "ip -4 -o addr show | grep 10\.10\.1\."; done
+machine1hostname=10.10.1.1
+machine2hostname=10.10.1.2
+machine3hostname=10.10.1.3
+machine4hostname=10.10.1.4
+machine5hostname=10.10.1.5
+machine6hostname=10.10.1.6
+machine7hostname=10.10.1.7
+machine8hostname=10.10.1.8
+machine9hostname=10.10.1.9
+machine10hostname=10.10.1.10
+machine11hostname=10.10.1.11
+machine12hostname=10.10.1.12
 
 
 # Memcached does not run with root access
