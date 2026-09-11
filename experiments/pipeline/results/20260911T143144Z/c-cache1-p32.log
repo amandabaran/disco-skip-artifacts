@@ -1,0 +1,49 @@
+Node arena:   262154 nodes, 0.0156256 GiB per memory server
+Vector arena: 2000010 vectors, 0.596049 GiB per memory server -- caps writes at 2000000 per client for the whole run
+Experiment: << Workload: /users/adb321/disco-skip-artifacts/workloads/oops-workloadc-uniform
+Selected device: uverbs0
+ibp8s0 uverbs0 NodeType::CA TransportType::IB
+Binded successfully (port_id, port_lid) = (1, 130)
+[CB:info] PD 'primary' registered
+[CB:info] Buffer 'shared-buf' of size 53248 allocated
+Client region: 53248 bytes
+[CB:info] Mr 'shared-mr' under PD 'primary' registered with buf 'shared-buf' (offset: 0, length: 53248) and rights 15
+[CB:info] Cq 'cq1' registered
+[CE:info] Publishing qp qp-2-for-1
+[CE:info] Connected to qp qp-1-for-2 with rights 15
+[CE:info] Unpublishing qp qp-2-for-1
+Bootstrap: wrote 5 nodes + 5 vectors (4 heads + 1 data node) to 1 replica(s)
+Querying YCSB for the set of initial key-pairs... Done.
+Inserting the initial key-pairs...  Done.
+Configuring Client 2
+Querying YCSB for the list of operations... Done. Packed 1000000 operations structural states.
+Waiting for the initialization of other clients... Done.
+Running the benchmark (YCSB Swarm Engine)... 
+Done. Results:
+
+################ Cache:
+consulted:               yes
+heads bootstrapped:      yes
+levels:                  4
+node capacity:           16
+offset hint:             0.876 hit rate (838681 hit / 118216 miss)
+nodes allocated:         16439 of 262144
+vectors allocated:       134372 of 2000000
+level 0: 2165 nodes, 422 orphans, 14012 entries
+level 1: 278 nodes, 53 orphans, 1743 entries
+level 2: 39 nodes, 7 orphans, 225 entries
+level 3: 5 nodes, 3 orphans, 32 entries
+
+################ Counters:
+rdma_reads:              0
+rdma_cas_attempts:       0
+rdma_cas_failures:       0
+gets_with_writeback:     0
+gets_without_writeback:  0
+put_retries:             0
+
+################ Main stats:
+
+Local tput: 1501 kops
+Local duration: 0s
+###DONE###

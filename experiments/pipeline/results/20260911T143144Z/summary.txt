@@ -1,0 +1,24 @@
+
+--- workloada (50% read / 50% update), cache on ---
+a-cache1-p1          oops-workloada-uniform   cache=1 a=1   tput=52       vecs=250522 of 2000000  
+a-cache1-p2          oops-workloada-uniform   cache=1 a=2   tput=104      vecs=250481 of 2000000  
+a-cache1-p4          oops-workloada-uniform   cache=1 a=4   tput=184      vecs=251327 of 2000000  
+a-cache1-p8          oops-workloada-uniform   cache=1 a=8   tput=278      vecs=251334 of 2000000  
+a-cache1-p16         oops-workloada-uniform   cache=1 a=16  tput=288      vecs=251214 of 2000000  
+a-cache1-p32         oops-workloada-uniform   cache=1 a=32  tput=279      vecs=252125 of 2000000  
+
+--- workloadc (100% read), cache on ---
+c-cache1-p1          oops-workloadc-uniform   cache=1 a=1   tput=284      vecs=133203 of 2000000  
+c-cache1-p2          oops-workloadc-uniform   cache=1 a=2   tput=547      vecs=133218 of 2000000  
+c-cache1-p4          oops-workloadc-uniform   cache=1 a=4   tput=1144     vecs=133236 of 2000000  
+c-cache1-p8          oops-workloadc-uniform   cache=1 a=8   tput=1547     vecs=133423 of 2000000  
+c-cache1-p16         oops-workloadc-uniform   cache=1 a=16  tput=1619     vecs=133677 of 2000000  
+c-cache1-p32         oops-workloadc-uniform   cache=1 a=32  tput=1501     vecs=134372 of 2000000  
+
+--- cache off, for the no-cache baseline ---
+a-cache0-p1          oops-workloada-uniform   cache=0 a=1   tput=34       vecs=251328 of 2000000  
+a-cache0-p8          oops-workloada-uniform   cache=0 a=8   tput=195      vecs=251326 of 2000000  
+a-cache0-p32         oops-workloada-uniform   cache=0 a=32  tput=208      vecs=251620 of 2000000  
+c-cache0-p1          oops-workloadc-uniform   cache=0 a=1   tput=45       vecs=133203 of 2000000  
+c-cache0-p8          oops-workloadc-uniform   cache=0 a=8   tput=298      vecs=133394 of 2000000  
+c-cache0-p32         oops-workloadc-uniform   cache=0 a=32  tput=319      vecs=134467 of 2000000  

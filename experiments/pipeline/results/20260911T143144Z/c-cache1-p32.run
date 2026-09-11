@@ -1,0 +1,6 @@
+Running exp pipeline/20260911T143144Z/c-cache1-p32: disco-skip-exe -w oops-workloadc-uniform -s 1 -c 1 -a 32 -I 100000 -W 50000 --cache 1 --vecs-per-client 2000000 --nodes-per-client 262144
+Setup 12 oops tmux............ ✓
+StartingSanitizing port 11211...
+Spawning isolated tmux registry...
+. (Waiting for servers to initialize).... ✓
+Running......  ✓
