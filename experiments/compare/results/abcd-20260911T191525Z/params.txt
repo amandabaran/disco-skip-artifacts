@@ -1,0 +1,4 @@
+ycsb-abcd  20260911T191525Z
+iter=100000 warmup=50000 servers=3 clients=1
+vecs/client=2000000 nodes/client=262144
+metric: SUM of per-client kops (fusee's aggregate divided by clients)

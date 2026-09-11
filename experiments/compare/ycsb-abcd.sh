@@ -36,9 +36,27 @@ source "$HERE/lib.sh"
 ITER=${1:-100000}
 WARMUP=${2:-50000}
 SERVERS=${SERVERS:-3}
-CLIENTS=${CLIENTS:-1}
+# A LIST, because the figures these feed are throughput-vs-clients.
+# plot-datapoints/ycsb-uniform-3x2.py sweeps client_counts on the x axis, so a
+# single-client run is one point on a line chart.
+CLIENT_COUNTS=(${CLIENT_COUNTS:-1 2 4 8})
 VECS=${VECS:-2000000}
 NODES=${NODES:-262144}
+# Operations in flight per client. Left at 1 by default because FUSEE has no
+# async support at all (its execute_point_op is a synchronous lambda), so 1 is
+# the only setting at which all three systems are doing the same thing.
+# disco-skip and swarm-kv both accept -a and both default to 1.
+ASYNC=${ASYNC:-1}
+# Per-operation latency timing on our arms.
+#
+# ON by default, because it is the FAIR setting, not the convenient one:
+# swarm-kv records latency unconditionally in oops_state.hpp and fusee in its
+# run loop, and neither has a switch. A disco-skip run with LATENCY=0 is
+# therefore NOT comparable against them -- it is a disco-skip-only throughput
+# number. Use LATENCY=0 when the figure plots throughput alone and only
+# disco-skip arms matter; the log then omits the GET/PUT stats sections
+# entirely, so the choice is visible in the data rather than only here.
+LATENCY=${LATENCY:-1}
 
 # workload letter -> workload file. An explicit map, not string concatenation:
 # there is no oops-workloadd-uniform (it would be byte-identical to
@@ -59,32 +77,47 @@ mkdir -p "$OUT"
 
 {
   echo "ycsb-abcd  $STAMP"
-  echo "iter=$ITER warmup=$WARMUP servers=$SERVERS clients=$CLIENTS"
+  echo "iter=$ITER warmup=$WARMUP servers=$SERVERS clients=[${CLIENT_COUNTS[*]}] async=$ASYNC latency=$LATENCY"
+  [ "$LATENCY" = 0 ] && echo "WARNING: latency timing OFF on disco-skip arms only -- NOT comparable with swarm-kv/fusee"
+  echo "logs: logs/YCSB/workload-<L>/<SCHEME>/${SERVERS}servers/<nc>client/ (plot-datapoints layout)"
   echo "vecs/client=$VECS nodes/client=$NODES"
   echo "metric: SUM of per-client kops (fusee's aggregate divided by clients)"
 } | tee "$OUT/params.txt"
 
-printf "\n%-3s %-22s %10s %7s %s\n" wl system total_kops nlogs notes \
+printf "\n%-3s %-22s %8s %10s %7s %s\n" wl system clients total_kops nlogs notes \
     | tee -a "$OUT/summary.txt"
 
+# Scheme directory names as plot-datapoints/ expects them. The existing figures
+# key off logs/YCSB/workload-<LETTER>/<SCHEME>/<N>servers/<nc>client/client<c>.txt
+# -- the same layout experiments/ycsb-all.sh writes -- so writing anywhere else
+# means the plot scripts cannot see the run. An earlier version of this file
+# used compare/<stamp>/... and produced data no existing figure could read.
+declare -A SCHEME=(
+  [disco-skip-cache1]=DISCO-SKIP
+  [disco-skip-cache0]=DISCO-SKIP-NOCACHE
+  [swarm-kv]=SWARM-KV
+  [fusee]=FUSEE
+)
+
 run_arm() {
-  local wl=$1 label=$2 binary=$3 system=$4; shift 4
-  local folder="compare/abcd-$STAMP/$wl/$label"
-  local logdir="$OUT/$wl-$label"
+  local wl=$1 label=$2 binary=$3 system=$4 nc=$5; shift 5
+  local upper; upper=$(echo "$wl" | tr '[:lower:]' '[:upper:]')
+  local folder="YCSB/workload-$upper/${SCHEME[$label]}/${SERVERS}servers/${nc}client"
+  local logdir="$OUT/$wl-$label-${nc}c"
 
-  ( cd "$ROOT_DIR" && timeout 1200 ./scripts/run.sh "$binary" "$folder" \
-      "${WL[$wl]}" "$SERVERS" "$CLIENTS" -I "$ITER" -W "$WARMUP" "$@" ) \
-      > "$OUT/$wl-$label.run" 2>&1
+  ( cd "$ROOT_DIR" && timeout 1800 ./scripts/run.sh "$binary" "$folder" \
+      "${WL[$wl]}" "$SERVERS" "$nc" -I "$ITER" -W "$WARMUP" "$@" ) \
+      > "$OUT/$wl-$label-${nc}c.run" 2>&1
 
-  fetch_logs "$folder" "$CLIENTS" "$logdir"
-  read -r total nlogs percsv <<<"$(total_kops "$system" "$CLIENTS" "$logdir")"
+  fetch_logs "$folder" "$nc" "$logdir"
+  read -r total nlogs percsv <<<"$(total_kops "$system" "$nc" "$logdir")"
   local notes; notes=$(run_warnings "$logdir")
   [ "$nlogs" -eq 0 ] && notes="$notes NO-TPUT-PARSED"
-  [ "$nlogs" -gt 0 ] && [ "$nlogs" -lt "$CLIENTS" ] && notes="$notes PARTIAL($nlogs/$CLIENTS)"
+  [ "$nlogs" -gt 0 ] && [ "$nlogs" -lt "$nc" ] && notes="$notes PARTIAL($nlogs/$nc)"
 
-  printf "%-3s %-22s %10s %7s %s\n" "$wl" "$label" "$total" "$nlogs" "$notes" \
-      | tee -a "$OUT/summary.txt"
-  echo "$wl,$label,$system,$SERVERS,$CLIENTS,$total,$nlogs,\"$percsv\",\"$notes\"" \
+  printf "%-3s %-22s %8s %10s %7s %s\n" "$wl" "$label" "$nc" "$total" "$nlogs" \
+      "$notes" | tee -a "$OUT/summary.txt"
+  echo "$wl,$label,$system,$SERVERS,$nc,$total,$nlogs,\"$percsv\",\"$notes\"" \
       >> "$OUT/results.csv"
 }
 
@@ -92,13 +125,17 @@ echo "wl,system,binary,servers,clients,total_kops,nlogs,per_client_kops,notes" \
     > "$OUT/results.csv"
 
 for wl in "${ORDER[@]}"; do
-  echo "" | tee -a "$OUT/summary.txt"
-  run_arm "$wl" disco-skip-cache1 disco-skip-exe disco-skip \
-      --cache 1 --vecs-per-client "$VECS" --nodes-per-client "$NODES"
-  run_arm "$wl" disco-skip-cache0 disco-skip-exe disco-skip \
-      --cache 0 --vecs-per-client "$VECS" --nodes-per-client "$NODES"
-  run_arm "$wl" swarm-kv swarmkv swarmkv
-  run_arm "$wl" fusee    fusee    fusee
+  for nc in "${CLIENT_COUNTS[@]}"; do
+    echo "" | tee -a "$OUT/summary.txt"
+    run_arm "$wl" disco-skip-cache1 disco-skip-exe disco-skip "$nc" \
+        -a "$ASYNC" --latency "$LATENCY" --cache 1 \
+        --vecs-per-client "$VECS" --nodes-per-client "$NODES"
+    run_arm "$wl" disco-skip-cache0 disco-skip-exe disco-skip "$nc" \
+        -a "$ASYNC" --latency "$LATENCY" --cache 0 \
+        --vecs-per-client "$VECS" --nodes-per-client "$NODES"
+    run_arm "$wl" swarm-kv swarmkv swarmkv "$nc" -a "$ASYNC"
+    run_arm "$wl" fusee    fusee    fusee    "$nc"
+  done
 done
 
 echo "" | tee -a "$OUT/summary.txt"

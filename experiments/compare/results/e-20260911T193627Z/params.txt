@@ -1,0 +1,6 @@
+ycsb-e  20260911T193627Z
+iter=5000 warmup=2000 servers=3 clients=1
+scan lengths: 8
+dlsm: mem=[1 2 3] compute=[5] threads=1
+NOTE: the disco-skip column is the REGISTER range path, not the skip
+      vector (A10 deferred). See the header of this script.

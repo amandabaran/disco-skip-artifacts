@@ -1,0 +1,18 @@
+=============================
+dLSM/YCSB: 20260911-153729_ycsb-e_uniform_t1c4_s8
+  workload/dist: ycsb-e / uniform
+  threads/coros: 1 / 4
+  scan len max:  1..8
+  memory nodes:  w1 w2 w3
+  compute nodes: w5
+=============================
+[1/5] Cleanup
+[2/5] Start Server
+bash: line 1: 1782547 Killed                  nohup ./Server 19843 64 0 > /users/adb321/disco-skip-artifacts/bin/dlsm/server.log 2>&1
+  w1: Server 19843 64 0
+bash: line 1: 1587765 Killed                  nohup ./Server 19843 64 1 > /users/adb321/disco-skip-artifacts/bin/dlsm/server.log 2>&1
+  w2: Server 19843 64 1
+bash: line 1: 1583274 Killed                  nohup ./Server 19843 64 2 > /users/adb321/disco-skip-artifacts/bin/dlsm/server.log 2>&1
+  w3: Server 19843 64 2
+./experiments/dlsm/run_ycsb.sh: line 75: syntax error near unexpected token `('
+./experiments/dlsm/run_ycsb.sh: line 75: `    echo "[ERROR] could not resolve node addresses (compute='$compute_ips'" >&2'

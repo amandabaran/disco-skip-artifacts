@@ -1,0 +1,5 @@
+wl,system,binary,servers,clients,total_kops,nlogs,per_client_kops,notes
+d,disco-skip-cache1,disco-skip,3,1,160,1,"160",""
+d,disco-skip-cache0,disco-skip,3,1,45,1,"45",""
+d,swarm-kv,swarmkv,3,1,212,1,"212",""
+d,fusee,fusee,3,1,212,1,"212",""

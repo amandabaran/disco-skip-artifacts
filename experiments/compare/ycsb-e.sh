@@ -104,7 +104,7 @@ run_ours() {
 
   ( cd "$ROOT_DIR" && timeout 1800 ./scripts/run.sh disco-skip-exe "$folder" \
       "oops-workloade-scan$n" "$SERVERS" "$CLIENTS" \
-      -I "$ITER" -W "$WARMUP" --cache 1 \
+      -I "$ITER" -W "$WARMUP" --cache 1 --latency "${LATENCY:-1}" \
       --maxrange "$n" \
       --vecs-per-client "$VECS" --nodes-per-client "$NODES" ) \
       > "$OUT/scan$n-$label.run" 2>&1

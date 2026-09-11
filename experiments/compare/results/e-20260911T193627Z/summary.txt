@@ -1,0 +1,4 @@
+
+scanlen system               total_kops   nlogs notes
+
+8      disco-skip-reg              290       1  register-path-not-skipvector

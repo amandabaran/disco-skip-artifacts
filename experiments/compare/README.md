@@ -55,6 +55,36 @@ was dead. The binaries on the workers were hand-copied and had gone two days
 stale against a fresh rebuild — meaning a dLSM measurement silently ran the
 wrong build. `zip-binaries.sh` now adds them with their path.
 
+## Per-operation latency, and when to turn it off
+
+`LATENCY=0 ./ycsb-abcd.sh` (or `--latency 0` directly) stops disco-skip timing
+individual operations. It removes two `clock_gettime` calls and a profiler
+update per op — tens of ns against a ~4 µs operation, so low single-digit
+percent, which is worth removing from a pure throughput figure and worth
+keeping for anything that plots latency.
+
+**On is the default because it is the fair setting.** swarm-kv records latency
+unconditionally (`swarm-kv/src/oops_state.hpp`) and so does fusee (in its run
+loop); neither has a switch, so neither can be turned off without editing it. A
+disco-skip number measured with `LATENCY=0` next to their numbers is a
+disco-skip advantage, not a result. Use it only for figures where every arm is
+ours.
+
+The switch gates the *start* timestamp, not just the recording, so it genuinely
+removes both clock reads. With it off, the log has no `######## GET stats:` or
+`PUT stats:` sections at all — `reportStats()` prints a section only when the
+profiler has measurements — so the choice is visible in the data rather than
+only in the invocation.
+
+**This was not previously recorded at all.** `SvFuture::begin()` stamped a
+start time and exposed it through `isMeasuring()`/`getStart()` for a caller to
+use, and no caller ever did; only `RangeFuture` recorded anything. So
+`get_profiler` and `put_profiler` were always empty and every benchmark log
+contained zero per-operation latency for disco-skip, while the comparison
+systems filled theirs in. The failure mode was a *missing section* rather than
+a zero, which is why it went unnoticed — a latency panel simply came out blank
+for one system.
+
 ## What the numbers do and do not say
 
 **The E column for disco-skip is not a skip-vector measurement, and its two
@@ -86,6 +116,18 @@ it previously parsed only during load and dropped silently during the run.
 and parses its trace; dLSM's `ycsbc` has its own built-in generator and shards
 keys across compute nodes. Same workload *definition*, different draws. Two
 measurements of one workload, not paired samples.
+
+**Logs go where the existing figures look for them.** Runs write to
+`logs/YCSB/workload-<LETTER>/<SCHEME>/<N>servers/<nc>client/client<c>.txt`, the
+layout `experiments/ycsb-all.sh` uses and `plot-datapoints/*.py` reads, with
+schemes `DISCO-SKIP`, `DISCO-SKIP-NOCACHE`, `SWARM-KV`, `FUSEE`. An earlier
+version of this harness wrote to `compare/<stamp>/...` and produced data no
+existing plot script could see. `results/<stamp>/results.csv` is the same data
+in one file for ad-hoc plotting.
+
+**Client counts are a sweep, not a single point.** The existing figures are
+throughput-vs-clients, so `CLIENT_COUNTS` defaults to `1 2 4 8`; one client is
+one point on a line chart.
 
 **Arena sizing bounds run length** on the disco-skip arms: every write
 allocates a vector and nothing is reclaimed, so `--vecs-per-client` must cover

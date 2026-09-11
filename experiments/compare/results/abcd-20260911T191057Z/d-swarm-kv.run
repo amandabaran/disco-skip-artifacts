@@ -1,0 +1,6 @@
+Running exp compare/abcd-20260911T191057Z/d/swarm-kv: swarmkv -w oops-workloadd-latest -s 3 -c 1 -I 5000 -W 2000
+Setup 12 oops tmux............ ✓
+StartingSanitizing port 11211...
+Spawning isolated tmux registry...
+... (Waiting for servers to initialize).... ✓
+Running.......  ✓

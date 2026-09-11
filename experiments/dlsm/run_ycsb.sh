@@ -1,7 +1,18 @@
 #!/bin/bash
 export LD_LIBRARY_PATH="/bin/disco-skip/.deps/gcc/relwithdebinfo/lib:$LD_LIBRARY_PATH"
 # Run dLSM under YCSB workloads via ycsbc.
-# Assumes bin/dlsm/connection.conf is already correct on every node.
+#
+# WRITES connection.conf ITSELF. It used to say it assumed the file was already
+# correct on every node, and it was not correct anywhere: bin.zip ships only
+# Server/ycsbc/db_bench, so no worker had the file at all and Server came up
+# with nothing to connect to -- the run hung at "[2/5] Start Server" with a
+# server.log that looked like a healthy RDMA init. Generating it here also means
+# it tracks MEM_NODES/COMPUTE_NODES, which are now overridable; a static file
+# in bin.zip would be silently wrong whenever those change.
+#
+# Same generator as run.sh. `getent hosts wN` resolves to the 10.10.1.x
+# experiment LAN (10.10.1.1 for w1), which is the RDMA fabric -- not the
+# CloudLab control network.
 # Usage: ./experiments/dlsm/run_ycsb.sh [workload] [distribution] [threads]
 trap 'kill $(jobs -p) 2>/dev/null' SIGINT
 set -uo pipefail
@@ -41,6 +52,30 @@ echo "  memory nodes:  ${MEM_NODES[*]/#/w}"
 echo "  compute nodes: ${COMPUTE_NODES[*]/#/w}"
 echo "============================="
 
+# dLSM's connection.conf: line 1 = compute IPs (space-separated), line 2 = memory IPs
+write_connection_conf() {
+  local compute_ips memory_ips conf
+  compute_ips=$(for n in "${COMPUTE_NODES[@]}"; do
+                   getent hosts "w$n" | awk '{print $1; exit}'
+                done | paste -sd' ')
+  memory_ips=$( for n in "${MEM_NODES[@]}";     do
+                   getent hosts "w$n" | awk '{print $1; exit}'
+                done | paste -sd' ')
+  if [ -z "$compute_ips" ] || [ -z "$memory_ips" ]; then
+    echo "[ERROR] could not resolve node addresses (compute='$compute_ips'" >&2
+    echo "        memory='$memory_ips'). DNS is unreliable on this cluster;" >&2
+    echo "        check 'getent hosts w1' on the gateway." >&2
+    return 1
+  fi
+  conf=$(printf "%s\n%s\n" "$compute_ips" "$memory_ips")
+  echo "Writing connection.conf:"
+  echo "  compute: $compute_ips"
+  echo "  memory:  $memory_ips"
+  for n in "${COMPUTE_NODES[@]}" "${MEM_NODES[@]}"; do
+    ssh -n "w$n" "mkdir -p $DLSM_DIR && cat > $DLSM_DIR/connection.conf" <<< "$conf"
+  done
+}
+
 kill_dlsm() {
   ssh -n "$1" "pkill -9 -u \$USER -x ycsbc  2>/dev/null; \
                pkill -9 -u \$USER -x Server 2>/dev/null; \
@@ -52,8 +87,9 @@ echo "[1/5] Cleanup"
 for n in "${COMPUTE_NODES[@]}" "${MEM_NODES[@]}"; do kill_dlsm "w$n"; done
 sleep 2
 
-# 2. Start Server on memory node(s)
-echo "[2/5] Start Server"
+# 2. connection.conf, then Server on memory node(s)
+echo "[2/5] Distribute connection.conf and start Server"
+write_connection_conf || exit 1
 for i in "${!MEM_NODES[@]}"; do
   m="${MEM_NODES[$i]}"
   ssh -n "w$m" "cd $DLSM_DIR && nohup ./Server $DLSM_PORT $MEM_SIZE_GB $i \

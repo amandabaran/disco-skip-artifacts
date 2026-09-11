@@ -1,0 +1,373 @@
+Workload: /users/adb321/disco-skip-artifacts/workloads/oops-workloadb-uniform
+Log entry size: 136
+Read entry size: 104
+Selected device: uverbs0
+ibp8s0 uverbs0 NodeType::CA TransportType::IB
+Binded successfully (port_id, port_lid) = (1, 130)
+[CB:info] PD 'primary' registered
+[CB:info] Buffer 'shared-buf' of size 14496 allocated
+[CB:info] Mr 'shared-mr' under PD 'primary' registered with buf 'shared-buf' (offset: 0, length: 14496) and rights 15
+[CB:info] Cq 'cq' registered
+[CB:info] Cq 'cq2' registered
+[CE:info] Publishing qp qp-4-for-1
+[CE:info] Publishing qp qp-4-for-2
+[CE:info] Publishing qp qp-4-for-3
+[CE:info] Connected to qp qp-1-for-4 with rights 15
+[CE:info] Connected to qp qp-2-for-4 with rights 15
+[CE:info] Connected to qp qp-3-for-4 with rights 15
+[CE:info] Unpublishing qp qp-4-for-1
+[CE:info] Unpublishing qp qp-4-for-2
+[CE:info] Unpublishing qp qp-4-for-3
+[CB:info] PD 'pd' registered
+[CB:info] Buffer 'buf' of size 24576 allocated
+[CB:info] Mr 'mr' under PD 'pd' registered with buf 'buf' (offset: 0, length: 24576) and rights 15
+[CB:info] Cq 'index-cq' registered
+[CE:info] Publishing qp 1-race-qp-4-for-1
+[ClientIndex:info] Connecting...
+[CE:info] Connected to qp 1-race-qp-1-for-4 with rights 15
+[ClientIndex:info] Connected!
+[ClientIndex:info] RDMA buffer: 97652527452928 to 97652527477504
+[CE:info] Unpublishing qp 1-race-qp-4-for-1
+[CB:info] PD 'pd' registered
+[CB:info] Buffer 'buf' of size 24576 allocated
+[CB:info] Mr 'mr' under PD 'pd' registered with buf 'buf' (offset: 0, length: 24576) and rights 15
+[CB:info] Cq 'index-cq' registered
+[CE:info] Publishing qp 2-race-qp-4-for-2
+[ClientIndex:info] Connecting...
+[CE:info] Connected to qp 2-race-qp-2-for-4 with rights 15
+[ClientIndex:info] Connected!
+[ClientIndex:info] RDMA buffer: 97652527509888 to 97652527534464
+[CE:info] Unpublishing qp 2-race-qp-4-for-2
+[CB:info] PD 'pd' registered
+[CB:info] Buffer 'buf' of size 24576 allocated
+[CB:info] Mr 'mr' under PD 'pd' registered with buf 'buf' (offset: 0, length: 24576) and rights 15
+[CB:info] Cq 'index-cq' registered
+[CE:info] Publishing qp 3-race-qp-4-for-3
+[ClientIndex:info] Connecting...
+[CE:info] Connected to qp 3-race-qp-3-for-4 with rights 15
+[ClientIndex:info] Connected!
+[ClientIndex:info] RDMA buffer: 97652527566912 to 97652527591488
+[CE:info] Unpublishing qp 3-race-qp-4-for-3
+Querying YCSB for the set of initial key-pairs... Done.
+Inserting the initial key-pairs...  Done.
+Querying YCSB for the list of operations... Done.
+Running the benchmark... Done. Results:
+
+################ Main stats:
+######## SEARCH stats:
+cache-hits: 61.735%
+true-hit: 61.735% (100% of hits)
+Number of measurements: 100000.
+Average latency: 1us.
+0.1%: 605ns.
+1%: 625ns.
+2%: 635ns.
+3%: 640ns.
+4%: 650ns.
+5%: 655ns.
+6%: 670ns.
+7%: 680ns.
+8%: 685ns.
+9%: 690ns.
+10%: 695ns.
+11%: 700ns.
+12%: 705ns.
+13%: 710ns.
+14%: 710ns.
+15%: 715ns.
+16%: 715ns.
+17%: 720ns.
+18%: 720ns.
+19%: 720ns.
+20%: 720ns.
+21%: 725ns.
+22%: 725ns.
+23%: 725ns.
+24%: 725ns.
+25%: 730ns.
+26%: 730ns.
+27%: 730ns.
+28%: 735ns.
+29%: 735ns.
+30%: 740ns.
+31%: 745ns.
+32%: 745ns.
+33%: 750ns.
+34%: 750ns.
+35%: 755ns.
+36%: 755ns.
+37%: 760ns.
+38%: 760ns.
+39%: 765ns.
+40%: 765ns.
+41%: 765ns.
+42%: 770ns.
+43%: 775ns.
+44%: 780ns.
+45%: 785ns.
+46%: 790ns.
+47%: 795ns.
+48%: 800ns.
+49%: 800ns.
+50%: 805ns.
+51%: 810ns.
+52%: 815ns.
+53%: 825ns.
+54%: 835ns.
+55%: 840ns.
+56%: 850ns.
+57%: 865ns.
+58%: 885ns.
+59%: 905ns.
+60%: 940ns.
+61%: 1us.
+62%: 2us.
+63%: 2us.
+64%: 2us.
+65%: 2us.
+66%: 2us.
+67%: 2us.
+68%: 2us.
+69%: 2us.
+70%: 2us.
+71%: 2us.
+72%: 2us.
+73%: 2us.
+74%: 2us.
+75%: 2us.
+76%: 2us.
+77%: 2us.
+78%: 2us.
+79%: 2us.
+80%: 2us.
+81%: 2us.
+82%: 2us.
+83%: 2us.
+84%: 2us.
+85%: 3us.
+86%: 3us.
+87%: 3us.
+88%: 3us.
+89%: 3us.
+90%: 3us.
+91%: 3us.
+92%: 3us.
+93%: 3us.
+94%: 3us.
+95%: 3us.
+96%: 3us.
+97%: 3us.
+98%: 3us.
+99%: 3us.
+99.9%: 6us.
+######## GET stats:
+Number of measurements: 94998.
+Average latency: 4us.
+0.1%: 2us.
+1%: 3us.
+2%: 3us.
+3%: 3us.
+4%: 3us.
+5%: 3us.
+6%: 3us.
+7%: 3us.
+8%: 3us.
+9%: 3us.
+10%: 3us.
+11%: 3us.
+12%: 3us.
+13%: 3us.
+14%: 3us.
+15%: 3us.
+16%: 3us.
+17%: 3us.
+18%: 3us.
+19%: 3us.
+20%: 3us.
+21%: 3us.
+22%: 3us.
+23%: 3us.
+24%: 3us.
+25%: 3us.
+26%: 3us.
+27%: 3us.
+28%: 3us.
+29%: 3us.
+30%: 3us.
+31%: 3us.
+32%: 3us.
+33%: 3us.
+34%: 3us.
+35%: 3us.
+36%: 3us.
+37%: 3us.
+38%: 3us.
+39%: 3us.
+40%: 3us.
+41%: 3us.
+42%: 3us.
+43%: 3us.
+44%: 3us.
+45%: 3us.
+46%: 3us.
+47%: 3us.
+48%: 3us.
+49%: 3us.
+50%: 3us.
+51%: 3us.
+52%: 3us.
+53%: 3us.
+54%: 3us.
+55%: 3us.
+56%: 3us.
+57%: 3us.
+58%: 4us.
+59%: 4us.
+60%: 4us.
+61%: 4us.
+62%: 5us.
+63%: 5us.
+64%: 5us.
+65%: 5us.
+66%: 5us.
+67%: 5us.
+68%: 5us.
+69%: 5us.
+70%: 5us.
+71%: 5us.
+72%: 5us.
+73%: 5us.
+74%: 5us.
+75%: 5us.
+76%: 5us.
+77%: 5us.
+78%: 5us.
+79%: 5us.
+80%: 5us.
+81%: 5us.
+82%: 5us.
+83%: 5us.
+84%: 5us.
+85%: 5us.
+86%: 5us.
+87%: 5us.
+88%: 5us.
+89%: 5us.
+90%: 5us.
+91%: 5us.
+92%: 6us.
+93%: 6us.
+94%: 6us.
+95%: 6us.
+96%: 6us.
+97%: 6us.
+98%: 6us.
+99%: 7us.
+99.9%: 17us.
+######## UPDATE stats:
+Number of measurements: 5002.
+Average latency: 12us.
+0.1%: 10us.
+1%: 10us.
+2%: 11us.
+3%: 11us.
+4%: 11us.
+5%: 11us.
+6%: 11us.
+7%: 11us.
+8%: 11us.
+9%: 11us.
+10%: 11us.
+11%: 11us.
+12%: 11us.
+13%: 11us.
+14%: 11us.
+15%: 11us.
+16%: 11us.
+17%: 11us.
+18%: 11us.
+19%: 11us.
+20%: 11us.
+21%: 11us.
+22%: 11us.
+23%: 11us.
+24%: 11us.
+25%: 11us.
+26%: 11us.
+27%: 11us.
+28%: 11us.
+29%: 11us.
+30%: 11us.
+31%: 11us.
+32%: 11us.
+33%: 11us.
+34%: 11us.
+35%: 11us.
+36%: 11us.
+37%: 11us.
+38%: 12us.
+39%: 12us.
+40%: 12us.
+41%: 12us.
+42%: 12us.
+43%: 12us.
+44%: 12us.
+45%: 12us.
+46%: 12us.
+47%: 12us.
+48%: 12us.
+49%: 12us.
+50%: 12us.
+51%: 12us.
+52%: 12us.
+53%: 12us.
+54%: 12us.
+55%: 12us.
+56%: 12us.
+57%: 12us.
+58%: 12us.
+59%: 12us.
+60%: 13us.
+61%: 13us.
+62%: 13us.
+63%: 13us.
+64%: 13us.
+65%: 13us.
+66%: 13us.
+67%: 13us.
+68%: 13us.
+69%: 13us.
+70%: 13us.
+71%: 13us.
+72%: 13us.
+73%: 13us.
+74%: 13us.
+75%: 13us.
+76%: 13us.
+77%: 13us.
+78%: 13us.
+79%: 14us.
+80%: 14us.
+81%: 14us.
+82%: 14us.
+83%: 14us.
+84%: 14us.
+85%: 14us.
+86%: 14us.
+87%: 14us.
+88%: 14us.
+89%: 14us.
+90%: 14us.
+91%: 14us.
+92%: 14us.
+93%: 14us.
+94%: 14us.
+95%: 14us.
+96%: 15us.
+97%: 15us.
+98%: 15us.
+99%: 17us.
+99.9%: 25us.
+global average: 4777.17ns
+aggregated tput: 209kops
+###DONE###
