@@ -100,10 +100,19 @@ def main():
             line += f"{cell:>{w}}"
         print(line)
 
-        ours = means.get("disco-skip-cache1") or means.get("disco-skip-reg")
-        if ours is None:
-            ours = next((v for k, v in means.items()
-                         if k.startswith("disco-skip")), None)
+        # The primary arm ONLY. Falling back to another disco-skip arm here was
+        # a reporting bug: when the cache-on arm was excluded as void, the
+        # ratio quietly used the CACHE-OFF number and still labelled it
+        # "disco-skip" -- reporting 0.19x for a configuration that had in fact
+        # crashed, which reads as a catastrophic result rather than as missing
+        # data. If the primary arm has no usable number, there is no ratio.
+        ours_name = ("disco-skip-cache1" if "disco-skip-cache1" in means
+                     else "disco-skip-reg" if "disco-skip-reg" in means
+                     else None)
+        ours = means.get(ours_name) if ours_name else None
+        if ours is None and any(k.startswith("disco-skip") for k in
+                                (n for (_, n) in notes if _ == g)):
+            print(f"{'':<16}no ratio: the disco-skip arm is void here")
         others = {k: v for k, v in means.items()
                   if not k.startswith("disco-skip") and v > 0}
         if ours and others:
@@ -117,7 +126,7 @@ def main():
                 verdict = f"NOISE (margin {abs(ratio-1)*100:.1f}% <= band {band*100:.1f}%)"
             else:
                 verdict = "faster" if ratio > 1 else "SLOWER"
-            print(f"{'':<16}disco-skip / {best}: {ratio:.2f}x {verdict}")
+            print(f"{'':<16}{ours_name} / {best}: {ratio:.2f}x {verdict}")
 
     if wild:
         print("\n*** SPREAD OVER 15% OF THE MEAN on:")
