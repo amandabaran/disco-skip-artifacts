@@ -12,8 +12,9 @@ DLSM_DIR="$BASE_DIR/bin/dlsm"
 GATEWAY_LOG_DIR="$(dirname "$(realpath "$0")")/../../logs/dlsm"
 
 # Cluster layout
-MEM_NODES=(1)
-COMPUTE_NODES=(2 3 4 5 6)
+# Overridable; see the note in run_ycsb.sh about matching resources.
+MEM_NODES=(${MEM_NODES:-1})
+COMPUTE_NODES=(${COMPUTE_NODES:-2 3 4 5 6})
 
 # db_bench params (override via CLI args or env vars)
 BENCHMARK="${1:-fillrandom,readrandom}"

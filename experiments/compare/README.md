@@ -57,11 +57,23 @@ wrong build. `zip-binaries.sh` now adds them with their path.
 
 ## What the numbers do and do not say
 
-**The E column for disco-skip is not a skip-vector measurement.** There is no
-skip-vector range — A10 is deferred — so `OpScan` falls through to the register
-`RangeFuture`, the old flat-array structure. The call site says so. It is a
-baseline for the register path and must not be presented as a disco-skip result
-until A10 lands.
+**The E column for disco-skip is not a skip-vector measurement, and its two
+halves touch different structures.** There is no skip-vector range — A10 is
+deferred — so `OpScan` falls through to `getFreeRangeFuture()`, the register
+`RangeFuture` over the old flat array. But `OpInsert`/`OpPut` go to
+`getFreeFuture().doPut()`, the skip vector. They are disjoint:
+
+| share | op | structure | also written? |
+|---|---|---|---|
+| 95% | scan | register array | no |
+| 5% | insert | skip vector | not read |
+
+So the inserts do **not** grow the structure being scanned, which is the whole
+point of YCSB E and the reason dLSM's `ycsb-e` is worth measuring. Our column
+amounts to "95% reads of a static register array plus 5% unrelated skip-vector
+writes". Treat the dLSM column as the useful output — the target number for
+when A10 lands — and our column as a register-path baseline at best. It must
+not be presented as a disco-skip E result.
 
 **Workload D is not stock D.** Stock D is read 0.95 / insert 0.05 over `latest`.
 `oops-workloadd-latest` keeps `latest` and moves the 5% to update, so it

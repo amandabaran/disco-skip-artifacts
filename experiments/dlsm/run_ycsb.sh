@@ -10,8 +10,14 @@ BASE_DIR="/users/adb321/disco-skip-artifacts"
 DLSM_DIR="$BASE_DIR/bin/dlsm"
 GATEWAY_LOG_DIR="$(dirname "$(realpath "$0")")/../../logs/dlsm"
 
-MEM_NODES=(1)
-COMPUTE_NODES=(2 3 4 5 6)
+# Overridable so a comparison can MATCH RESOURCES. Defaults are dLSM's own
+# layout (1 memory node, 5 compute nodes); left as the default, a comparison
+# against a 1-client run is 5 nodes x $THREADS threads against one client,
+# which is a hardware difference masquerading as a throughput result.
+# experiments/compare/ycsb-e.sh sets both to mirror config.sh's server/client
+# split.
+MEM_NODES=(${MEM_NODES:-1})
+COMPUTE_NODES=(${COMPUTE_NODES:-2 3 4 5 6})
 
 WORKLOAD="${1:-ycsb-c}"          # ycsb-c | insert-only | update-only | scan-only
 DISTRIBUTION="${2:-zipfian}"     # zipfian | uniform

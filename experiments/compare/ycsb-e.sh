@@ -5,12 +5,28 @@
 #
 # ── READ THIS BEFORE QUOTING ANY NUMBER FROM HERE ───────────────────────────
 #
-# 1. OUR E DOES NOT MEASURE THE SKIP VECTOR. There is no skip-vector range --
-#    A10 is deferred -- so main.cpp's OpScan falls through to the register
-#    RangeFuture, i.e. the OLD flat-array structure. The comment at that call
-#    site says so outright. So the disco-skip column here is a baseline for the
-#    register path, not a disco-skip result, and it must not be presented as
-#    one until A10 lands.
+# 1. OUR E DOES NOT MEASURE THE SKIP VECTOR, AND ITS TWO HALVES DO NOT EVEN
+#    TOUCH THE SAME STRUCTURE. There is no skip-vector range -- A10 is deferred
+#    -- so main.cpp's OpScan falls through to getFreeRangeFuture(), the register
+#    RangeFuture over the OLD flat array. But OpInsert and OpPut go to
+#    getFreeFuture().doPut(), which is the skip vector. Those are disjoint:
+#
+#      95% scan   -> register array   (never written by this workload)
+#       5% insert -> skip vector      (never read by this workload)
+#
+#    So the insert half does NOT grow the structure being scanned, which is the
+#    main thing YCSB E is for and the reason dLSM's ycsb-e is interesting. Our
+#    column is therefore "95% reads of a static register array plus 5%
+#    unrelated skip-vector writes". It is a register-path baseline at best and
+#    must not be presented as a disco-skip E result. The genuinely useful
+#    output of this script today is the dLSM column, as the target number for
+#    when A10 lands.
+#
+#    (This also weakens the case for real inserts on our side specifically --
+#    they were chosen so both sides would grow during the run, and on our side
+#    they do not grow the scanned structure. Kept anyway: it costs nothing, it
+#    matches dLSM's op mix, and it is the right shape for when A10 makes the
+#    scan hit the skip vector.)
 #
 # 2. THE SCAN LENGTHS ARE MATCHED, AND THEY WERE NOT BEFORE. dLSM's ycsbc
 #    hardcoded `scan_len(1, 100)`; ours set maxscanlength=8. Mean ~50 against
@@ -50,9 +66,17 @@ SCANLENS=(${SCANLENS:-8 32 100})
 VECS=${VECS:-2000000}
 NODES=${NODES:-262144}
 
-# dLSM side
-DLSM_THREADS=${DLSM_THREADS:-4}
+# dLSM side.
+#
+# MATCHED TO OUR SPLIT ON PURPOSE. run_ycsb.sh defaults to 1 memory node and 5
+# compute nodes; against a 1-client disco-skip run that is 5 nodes x THREADS
+# threads versus one client, i.e. a hardware difference reported as a
+# throughput difference. config.sh puts servers on w1.. and clients on w5.., so
+# memory nodes mirror SERVERS and compute nodes mirror CLIENTS.
+DLSM_THREADS=${DLSM_THREADS:-1}
 DLSM_COROS=${DLSM_COROS:-4}
+DLSM_MEM_NODES=${DLSM_MEM_NODES:-$(seq -s' ' 1 "$SERVERS")}
+DLSM_COMPUTE_NODES=${DLSM_COMPUTE_NODES:-$(seq -s' ' 5 $((4 + CLIENTS)))}
 
 STAMP=$(date -u +%Y%m%dT%H%M%SZ)
 OUT="$HERE/results/e-$STAMP"
@@ -62,6 +86,7 @@ mkdir -p "$OUT"
   echo "ycsb-e  $STAMP"
   echo "iter=$ITER warmup=$WARMUP servers=$SERVERS clients=$CLIENTS"
   echo "scan lengths: ${SCANLENS[*]}"
+  echo "dlsm: mem=[$DLSM_MEM_NODES] compute=[$DLSM_COMPUTE_NODES] threads=$DLSM_THREADS"
   echo "NOTE: the disco-skip column is the REGISTER range path, not the skip"
   echo "      vector (A10 deferred). See the header of this script."
 } | tee "$OUT/params.txt"
@@ -102,7 +127,9 @@ run_dlsm() {
   # DLSM_SCAN_LEN_MAX reaches the remote ycsbc because run_ycsb.sh now
   # interpolates it into the ssh command line; exporting it here alone would
   # leave every arm at the upstream default of 100.
-  ( cd "$ROOT_DIR" && DLSM_SCAN_LEN_MAX="$n" timeout 1800 \
+  ( cd "$ROOT_DIR" && DLSM_SCAN_LEN_MAX="$n" \
+      MEM_NODES="$DLSM_MEM_NODES" COMPUTE_NODES="$DLSM_COMPUTE_NODES" \
+      timeout 1800 \
       ./experiments/dlsm/run_ycsb.sh ycsb-e uniform "$DLSM_THREADS" ) \
       > "$log" 2>&1
 
