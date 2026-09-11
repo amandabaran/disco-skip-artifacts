@@ -1,0 +1,36 @@
+# Custom YCSB Workload D (Read Latest)
+# Matches the data constraints of oops-workloada (1 field, 63 bytes)
+#
+# WHAT MAKES THIS D RATHER THAN B: the request distribution, not the op mix.
+# Stock YCSB D is read 0.95 / insert 0.05 over `latest`. The insert half cannot
+# be used here -- main.cpp parses INSERT only in the LOAD phase, so a run-phase
+# INSERT line is silently dropped and the arm would quietly run 5% short. Every
+# oops-* workload therefore pins insertproportion=0, and E already substitutes
+# update for stock E's insert. D follows the same rule, so the 5% is update.
+#
+# The consequence is worth stating plainly: this file is oops-workloadb-uniform
+# with `latest` in place of `uniform`. That is the whole contribution, and it is
+# a real one -- `latest` is a zipfian skewed to the tail of the keyspace, so it
+# concentrates on the most recently loaded keys and exercises the cache and the
+# right-hand edge of the skip vector rather than spreading flat. But it is NOT
+# stock D's "read what was just inserted" semantics, because nothing is
+# inserted during the run. There is deliberately no oops-workloadd-uniform: it
+# would be byte-identical to oops-workloadb-uniform.
+
+fieldcount=1
+fieldlength=63
+
+recordcount=100000
+operationcount=1000000
+workload=com.yahoo.ycsb.workloads.CoreWorkload
+
+readallfields=true
+
+readproportion=0.95
+updateproportion=0.05
+scanproportion=0
+insertproportion=0
+
+# The defining property of D. With insertproportion=0 the insert counter never
+# advances, so this is a zipfian fixed at the tail of the loaded keyspace.
+requestdistribution=latest

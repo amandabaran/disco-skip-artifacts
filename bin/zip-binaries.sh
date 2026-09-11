@@ -19,11 +19,19 @@ cd "$SCRIPT_DIR"
 # Each entry is "<label>:<checkout dir>:<executable name>". A checkout that is
 # not present is skipped, so this works whether or not the older projects are
 # still deployed alongside.
+#
+# ALL THREE LIVE IN disco-skip. The disco-skip repo is a copy of chimera with
+# chimera itself removed, so swarm-kv/ and fusee/ are siblings of disco-skip/
+# inside it and build from the same conan stack (see targets.yaml). These
+# entries used to name a `chimera` checkout, which does not exist under bin/ --
+# so both comparison binaries were silently skipped on every repack, the
+# `mv -f staging/fusee` in send-deployment.sh failed with its `|| true`, and the
+# workers kept running whatever copy was last deployed. They were 2 days stale
+# before anyone looked.
 TARGETS=(
   "disco-skip:disco-skip:disco-skip"
-  "chimera:chimera:chimera"
-  "swarm-kv:chimera:swarmkv"
-  "fusee:chimera:fusee"
+  "swarm-kv:disco-skip:swarmkv"
+  "fusee:disco-skip:fusee"
 )
 
 # Only disco-skip is required. The rest are historical comparison binaries and
@@ -85,4 +93,25 @@ rm -f bin.zip
 # -D: no directory entries, -j: junk paths, so names land flat in staging/.
 zip -Dj bin.zip "${found_paths[@]}"
 
-echo "Success: bin/bin.zip created with: ${found_labels[*]}"
+# dLSM goes in WITH its path, deliberately. send-deployment.sh already has a
+# branch that moves staging/dlsm/out/* into bin/dlsm/, and it was dead code:
+# the -j above junks every path, so nothing ever created staging/dlsm/out and
+# the branch never fired. The consequence was that dLSM had no automated deploy
+# path at all -- the binaries on the workers were hand-copied and went stale
+# (Sep 9 against a Sep 11 rebuild), so a dLSM measurement silently ran the wrong
+# build. Adding them here is what makes that branch do its job.
+#
+# Not REQUIRED: dLSM is an independent CMake build (bin/dlsm/build.sh) and a
+# checkout without it should still package the RDMA binaries.
+DLSM_BINS=()
+for b in dlsm/out/Server dlsm/out/ycsbc dlsm/out/db_bench; do
+  [ -f "$b" ] && DLSM_BINS+=("$b")
+done
+if [ "${#DLSM_BINS[@]}" -gt 0 ]; then
+  zip -q bin.zip "${DLSM_BINS[@]}"
+  echo "  found dlsm -> ${DLSM_BINS[*]}"
+else
+  echo "  (no dlsm binaries under ./dlsm/out -- run bin/dlsm/build.sh build)"
+fi
+
+echo "Success: bin/bin.zip created with: ${found_labels[*]}${DLSM_BINS:+ dlsm}"

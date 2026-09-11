@@ -1,0 +1,35 @@
+# Custom YCSB Workload E (Scan-heavy), scan length 1..100
+# Matches the data constraints of oops-workloada (1 field, 63 bytes)
+#
+# WHY A SCAN-LENGTH FAMILY. This exists to be compared against dLSM, whose
+# ycsbc hardcodes scan_len uniform 1..100 in include/util/ycsb.h. At our old
+# maxscanlength=8 that compares ~4.5-key scans against ~50-key ones, which is
+# not a comparison. Both sides are now swept over the same lengths: 8, 32, 100.
+#
+# THIS ONE USES REAL INSERTS, unlike oops-workloade-uniform. Stock YCSB E is
+# scan 0.95 / insert 0.05, and every other oops-* file pins insertproportion=0
+# because main.cpp's run-phase parser used to drop INSERT silently. It no longer
+# does, so E can be the real mix and match dLSM's ycsb-e -- which matters here
+# specifically, because inserts make the tree GROW during the run and scan cost
+# depends on how big it has got.
+#
+# ARENA: inserts are not reclaimed. Budget --vecs-per-client for recordcount
+# plus the inserts the run issues (5% of operationcount), plus splits.
+
+fieldcount=1
+fieldlength=63
+
+recordcount=100000
+operationcount=1000000
+workload=com.yahoo.ycsb.workloads.CoreWorkload
+
+readallfields=true
+
+readproportion=0
+updateproportion=0
+scanproportion=0.95
+insertproportion=0.05
+
+maxscanlength=100
+scanlengthdistribution=uniform
+requestdistribution=uniform
