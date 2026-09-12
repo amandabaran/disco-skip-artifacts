@@ -69,6 +69,19 @@ NODES=${NODES:-262144}
 # memory nodes mirror SERVERS and compute nodes mirror CLIENTS.
 DLSM_THREADS=${DLSM_THREADS:-1}
 DLSM_COROS=${DLSM_COROS:-4}
+# Operations in flight on OUR side, matched to dLSM's coroutine count.
+#
+# NOT the default of 1. dLSM's ycsbc runs $DLSM_THREADS threads x $DLSM_COROS
+# coroutines, so it keeps 4 operations in flight; a disco-skip arm at
+# async_parallelism=1 is fully serial and the gap between them would be partly
+# concurrency rather than structure. The first matched-workload dLSM arm came
+# out at 326 kops against our 34, and that comparison was 4-in-flight against
+# 1-in-flight.
+#
+# This is the same fairness rule the A-D sweep applies in the opposite
+# direction: there, fusee has no async support at all, so -a 1 is the only
+# setting at which all three systems do the same thing.
+ASYNC=${ASYNC:-$((DLSM_THREADS * DLSM_COROS))}
 DLSM_MEM_NODES=${DLSM_MEM_NODES:-$(seq -s' ' 1 "$SERVERS")}
 DLSM_COMPUTE_NODES=${DLSM_COMPUTE_NODES:-$(seq -s' ' 5 $((4 + CLIENTS)))}
 
@@ -80,7 +93,8 @@ mkdir -p "$OUT"
   echo "ycsb-e  $STAMP"
   echo "iter=$ITER warmup=$WARMUP servers=$SERVERS clients=$CLIENTS"
   echo "scan lengths: ${SCANLENS[*]}"
-  echo "dlsm: mem=[$DLSM_MEM_NODES] compute=[$DLSM_COMPUTE_NODES] threads=$DLSM_THREADS"
+  echo "dlsm: mem=[$DLSM_MEM_NODES] compute=[$DLSM_COMPUTE_NODES] threads=$DLSM_THREADS coros=$DLSM_COROS"
+  echo "ours: async=$ASYNC (matched to dlsm threads x coros)"
   echo "NOTE: disco-skip runs --ts faa; a range needs the counter snapshot."
 } | tee "$OUT/params.txt"
 
@@ -98,7 +112,7 @@ run_ours() {
   ( cd "$ROOT_DIR" && timeout 1800 ./scripts/run.sh disco-skip-exe "$folder" \
       "oops-workloade-scan$n" "$SERVERS" "$CLIENTS" \
       -I "$ITER" -W "$WARMUP" --cache 1 --latency "${LATENCY:-1}" \
-      --ts faa \
+      --ts faa -a "$ASYNC" \
       --maxrange "$n" \
       --vecs-per-client "$VECS" --nodes-per-client "$NODES" ) \
       > "$OUT/scan$n-$label.run" 2>&1
