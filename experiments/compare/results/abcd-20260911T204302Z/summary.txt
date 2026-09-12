@@ -1,0 +1,84 @@
+
+wl  system                  clients total_kops   nlogs notes
+
+a   disco-skip-cache1             1        107       1 
+a   disco-skip-cache0             1         35       1 
+a   swarm-kv                      1        151       1 
+a   fusee                         1        112       1 
+
+a   disco-skip-cache1             2        164       2 
+a   disco-skip-cache0             2         64       2 
+a   swarm-kv                      2        278       2 
+a   fusee                         2        209       2 
+
+a   disco-skip-cache1             4        236       4 
+a   disco-skip-cache0             4        106       4 
+a   swarm-kv                      4        552       4 
+a   fusee                         4        401       4 
+
+a   disco-skip-cache1             8        313       8 
+a   disco-skip-cache0             8        158       8 
+a   swarm-kv                      8        932       8 
+a   fusee                         8        664       8 
+
+b   disco-skip-cache1             1        241       1 
+b   disco-skip-cache0             1         47       1 
+b   swarm-kv                      1        203       1 
+b   fusee                         1        203       1 
+
+b   disco-skip-cache1             2        432       2 
+b   disco-skip-cache0             2         92       2 
+b   swarm-kv                      2        352       2 
+b   fusee                         2        354       2 
+
+b   disco-skip-cache1             4        740       4 
+b   disco-skip-cache0             4        172       4 
+b   swarm-kv                      4        753       4 
+b   fusee                         4        731       4 
+
+b   disco-skip-cache1             8       1201       8 
+b   disco-skip-cache0             8        308       8 
+b   swarm-kv                      8       1477       8 
+b   fusee                         8       1265       8 
+
+c   disco-skip-cache1             1        280       1 
+c   disco-skip-cache0             1         48       1 
+c   swarm-kv                      1        208       1 
+c   fusee                         1        228       1 
+
+c   disco-skip-cache1             2        532       2 
+c   disco-skip-cache0             2         96       2 
+c   swarm-kv                      2        370       2 
+c   fusee                         2        427       2 
+
+c   disco-skip-cache1             4        955       4 
+c   disco-skip-cache0             4        188       4 
+c   swarm-kv                      4        737       4 
+c   fusee                         4        869       4 
+
+c   disco-skip-cache1             8       1858       8 
+c   disco-skip-cache0             8        377       8 
+c   swarm-kv                      8       1543       8 
+c   fusee                         8       1513       8 
+
+d   disco-skip-cache1             1        244       1 
+d   disco-skip-cache0             1         49       1 
+d   swarm-kv                      1        253       1 
+d   fusee                         1        247       1 
+
+d   disco-skip-cache1             2        442       2 
+d   disco-skip-cache0             2         98       2 
+d   swarm-kv                      2        432       2 
+d   fusee                         2        424       2 
+
+d   disco-skip-cache1             4        763       4 
+d   disco-skip-cache0             4        188       4 
+d   swarm-kv                      4        923       4 
+d   fusee                         4        792       4 
+
+d   disco-skip-cache1             8          0       0  CRASH-OR-BAD-ARGS NO-TPUT-PARSED
+d   disco-skip-cache0             8        352       8 
+d   swarm-kv                      8       1902       8 
+d   fusee                         8       1439       8 
+
+results -> /users/adb321/disco-skip-artifacts/experiments/compare/results/abcd-20260911T204302Z

@@ -1,0 +1,92 @@
+wl,system,binary,servers,clients,total_kops,nlogs,per_client_kops,notes
+d,disco-skip-cache1,disco-skip,3,1,244,1,244,
+wl=d,,,,,,,,NO-LOGS
+label=disco-skip-cache1,,,,,,,,NO-LOGS
+nc=1,,,,,,,,NO-LOGS
+logdir=experiments/compare/results/abcd-20260912T014239Z/d-disco-skip-cache1-1c,,,,,,,,NO-LOGS
+notes=' ARENA-EXHAUSTED',,,,,,,,NO-LOGS
+d,disco-skip-cache0,disco-skip,3,1,49,1,49,
+wl=d,,,,,,,,NO-LOGS
+label=disco-skip-cache0,,,,,,,,NO-LOGS
+nc=1,,,,,,,,NO-LOGS
+logdir=experiments/compare/results/abcd-20260912T014239Z/d-disco-skip-cache0-1c,,,,,,,,NO-LOGS
+notes=' ARENA-EXHAUSTED',,,,,,,,NO-LOGS
+d,swarm-kv,swarmkv,3,1,256,1,256,
+wl=d,,,,,,,,NO-LOGS
+label=swarm-kv,,,,,,,,NO-LOGS
+nc=1,,,,,,,,NO-LOGS
+logdir=experiments/compare/results/abcd-20260912T014239Z/d-swarm-kv-1c,,,,,,,,NO-LOGS
+notes='',,,,,,,,NO-LOGS
+d,fusee,fusee,3,1,241,1,241,
+wl=d,,,,,,,,NO-LOGS
+label=fusee,,,,,,,,NO-LOGS
+nc=1,,,,,,,,NO-LOGS
+logdir=experiments/compare/results/abcd-20260912T014239Z/d-fusee-1c,,,,,,,,NO-LOGS
+notes='',,,,,,,,NO-LOGS
+d,disco-skip-cache1,disco-skip,3,2,440,2,"235,205",
+wl=d,,,,,,,,NO-LOGS
+label=disco-skip-cache1,,,,,,,,NO-LOGS
+nc=2,,,,,,,,NO-LOGS
+logdir=experiments/compare/results/abcd-20260912T014239Z/d-disco-skip-cache1-2c,,,,,,,,NO-LOGS
+notes=' ARENA-EXHAUSTED',,,,,,,,NO-LOGS
+d,disco-skip-cache0,disco-skip,3,2,96,2,"48,48",
+wl=d,,,,,,,,NO-LOGS
+label=disco-skip-cache0,,,,,,,,NO-LOGS
+nc=2,,,,,,,,NO-LOGS
+logdir=experiments/compare/results/abcd-20260912T014239Z/d-disco-skip-cache0-2c,,,,,,,,NO-LOGS
+notes=' ARENA-EXHAUSTED',,,,,,,,NO-LOGS
+d,swarm-kv,swarmkv,3,2,505,2,"252,253",
+wl=d,,,,,,,,NO-LOGS
+label=swarm-kv,,,,,,,,NO-LOGS
+nc=2,,,,,,,,NO-LOGS
+logdir=experiments/compare/results/abcd-20260912T014239Z/d-swarm-kv-2c,,,,,,,,NO-LOGS
+notes='',,,,,,,,NO-LOGS
+d,fusee,fusee,3,2,406,2,"235,171",
+wl=d,,,,,,,,NO-LOGS
+label=fusee,,,,,,,,NO-LOGS
+nc=2,,,,,,,,NO-LOGS
+logdir=experiments/compare/results/abcd-20260912T014239Z/d-fusee-2c,,,,,,,,NO-LOGS
+notes='',,,,,,,,NO-LOGS
+d,disco-skip-cache1,disco-skip,3,4,752,4,"212,172,184,184",
+wl=d,,,,,,,,NO-LOGS
+label=disco-skip-cache1,,,,,,,,NO-LOGS
+nc=4,,,,,,,,NO-LOGS
+logdir=experiments/compare/results/abcd-20260912T014239Z/d-disco-skip-cache1-4c,,,,,,,,NO-LOGS
+notes=' ARENA-EXHAUSTED',,,,,,,,NO-LOGS
+d,disco-skip-cache0,disco-skip,3,4,180,4,"45,45,45,45",
+wl=d,,,,,,,,NO-LOGS
+label=disco-skip-cache0,,,,,,,,NO-LOGS
+nc=4,,,,,,,,NO-LOGS
+logdir=experiments/compare/results/abcd-20260912T014239Z/d-disco-skip-cache0-4c,,,,,,,,NO-LOGS
+notes=' ARENA-EXHAUSTED',,,,,,,,NO-LOGS
+d,swarm-kv,swarmkv,3,4,969,4,"250,249,234,236",
+wl=d,,,,,,,,NO-LOGS
+label=swarm-kv,,,,,,,,NO-LOGS
+nc=4,,,,,,,,NO-LOGS
+logdir=experiments/compare/results/abcd-20260912T014239Z/d-swarm-kv-4c,,,,,,,,NO-LOGS
+notes='',,,,,,,,NO-LOGS
+d,fusee,fusee,3,4,929,4,"235,231,232,231",
+wl=d,,,,,,,,NO-LOGS
+label=fusee,,,,,,,,NO-LOGS
+nc=4,,,,,,,,NO-LOGS
+logdir=experiments/compare/results/abcd-20260912T014239Z/d-fusee-4c,,,,,,,,NO-LOGS
+notes='',,,,,,,,NO-LOGS
+d,disco-skip-cache1,disco-skip,3,8,923,8,"160,113,113,112,100,113,100,112",UNRESOLVED-OPS
+wl=d,,,,,,,,NO-LOGS
+label=disco-skip-cache1,,,,,,,,NO-LOGS
+nc=8,,,,,,,,NO-LOGS
+logdir=experiments/compare/results/abcd-20260912T014239Z/d-disco-skip-cache1-8c,,,,,,,,NO-LOGS
+notes=' ARENA-EXHAUSTED UNRESOLVED-OPS',,,,,,,,NO-LOGS
+d,disco-skip-cache0,disco-skip,3,8,328,8,"41,41,41,41,41,41,41,41",
+wl=d,,,,,,,,NO-LOGS
+label=disco-skip-cache0,,,,,,,,NO-LOGS
+nc=8,,,,,,,,NO-LOGS
+logdir=experiments/compare/results/abcd-20260912T014239Z/d-disco-skip-cache0-8c,,,,,,,,NO-LOGS
+notes=' ARENA-EXHAUSTED',,,,,,,,NO-LOGS
+d,swarm-kv,swarmkv,3,8,1699,8,"246,178,192,190,234,246,237,176",
+wl=d,,,,,,,,NO-LOGS
+label=swarm-kv,,,,,,,,NO-LOGS
+nc=8,,,,,,,,NO-LOGS
+logdir=experiments/compare/results/abcd-20260912T014239Z/d-swarm-kv-8c,,,,,,,,NO-LOGS
+notes='',,,,,,,,NO-LOGS
+d,fusee,fusee,3,8,1528,8,"200,199,196,198,170,200,167,198",

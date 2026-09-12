@@ -1,0 +1,9 @@
+
+wl  system                  clients total_kops   nlogs notes
+
+d   disco-skip-cache1             8       1271       8 
+d   disco-skip-cache0             8        336       8 
+d   swarm-kv                      8       1763       8 
+d   fusee                         8       1497       8 
+
+results -> /users/adb321/disco-skip-artifacts/experiments/compare/results/abcd-20260912T041704Z

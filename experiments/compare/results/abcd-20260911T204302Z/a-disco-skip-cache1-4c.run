@@ -1,0 +1,6 @@
+Running exp YCSB/workload-A/DISCO-SKIP/3servers/4client: disco-skip-exe -w oops-workloada-uniform -s 3 -c 4 -I 100000 -W 50000 -a 1 --latency 1 --cache 1 --vecs-per-client 500000 --nodes-per-client 262144
+Setup 12 oops tmux............ ✓
+StartingSanitizing port 11211...
+Spawning isolated tmux registry...
+... (Waiting for servers to initialize)....... ✓
+Running..........  ✓

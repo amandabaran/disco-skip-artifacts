@@ -1,0 +1,58 @@
+Node arena:   2097162 nodes, 0.125001 GiB per memory server
+Vector arena: 4000010 vectors, 1.1921 GiB per memory server -- caps writes at 500000 per client for the whole run
+Experiment: << Workload: /users/adb321/disco-skip-artifacts/workloads/oops-workloadd-latest
+timestamps:   clock (disciplined CLOCK_REALTIME)
+cache:        on  offset-hint: on  async: 1  maxrange: 10  latency: on
+Selected device: uverbs0
+mlx4_0 uverbs0 NodeType::CA TransportType::IB
+Binded successfully (port_id, port_lid) = (1, 79)
+[CB:info] PD 'primary' registered
+[CB:info] Buffer 'shared-buf' of size 3520 allocated
+Client region: 3520 bytes
+[CB:info] Mr 'shared-mr' under PD 'primary' registered with buf 'shared-buf' (offset: 0, length: 3520) and rights 15
+[CB:info] Cq 'cq1' registered
+[CB:info] Cq 'cq2' registered
+[CB:info] Cq 'cq3' registered
+[CB:info] Cq 'cq4' registered
+[CB:info] Cq 'cq5' registered
+[CB:info] Cq 'cq7' registered
+[CB:info] Cq 'cq8' registered
+[CB:info] Cq 'cq9' registered
+[CB:info] Cq 'cq10' registered
+[CB:info] Cq 'cq11' registered
+[CE:info] Publishing qp qp-6-for-1
+[CE:info] Publishing qp qp-6-for-2
+[CE:info] Publishing qp qp-6-for-3
+[CE:info] Publishing qp qp-6-for-4
+[CE:info] Publishing qp qp-6-for-5
+[CE:info] Publishing qp qp-6-for-7
+[CE:info] Publishing qp qp-6-for-8
+[CE:info] Publishing qp qp-6-for-9
+[CE:info] Publishing qp qp-6-for-10
+[CE:info] Publishing qp qp-6-for-11
+[CE:info] Connected to qp qp-1-for-6 with rights 15
+[CE:info] Connected to qp qp-2-for-6 with rights 15
+[CE:info] Connected to qp qp-3-for-6 with rights 15
+[CE:info] Connected to qp qp-4-for-6 with rights 15
+[CE:info] Connected to qp qp-5-for-6 with rights 15
+[CE:info] Connected to qp qp-7-for-6 with rights 15
+[CE:info] Connected to qp qp-8-for-6 with rights 15
+[CE:info] Connected to qp qp-9-for-6 with rights 15
+[CE:info] Connected to qp qp-10-for-6 with rights 15
+[CE:info] Connected to qp qp-11-for-6 with rights 15
+[CE:info] Unpublishing qp qp-6-for-1
+[CE:info] Unpublishing qp qp-6-for-2
+[CE:info] Unpublishing qp qp-6-for-3
+[CE:info] Unpublishing qp qp-6-for-4
+[CE:info] Unpublishing qp qp-6-for-5
+[CE:info] Unpublishing qp qp-6-for-7
+[CE:info] Unpublishing qp qp-6-for-8
+[CE:info] Unpublishing qp qp-6-for-9
+[CE:info] Unpublishing qp qp-6-for-10
+[CE:info] Unpublishing qp qp-6-for-11
+Configuring Client 6
+Querying YCSB for the list of operations... Done. Packed 1000000 operations: 949971 read, 50029 update, 0 scan, 0 insert.
+Waiting for the initialization of other clients... Done.
+Running the benchmark (YCSB Swarm Engine)... 
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  future 0 is stuck after 4097 steps without finishing: a state transition is not terminating

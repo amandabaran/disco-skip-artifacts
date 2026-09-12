@@ -5,28 +5,22 @@
 #
 # ── READ THIS BEFORE QUOTING ANY NUMBER FROM HERE ───────────────────────────
 #
-# 1. OUR E DOES NOT MEASURE THE SKIP VECTOR, AND ITS TWO HALVES DO NOT EVEN
-#    TOUCH THE SAME STRUCTURE. There is no skip-vector range -- A10 is deferred
-#    -- so main.cpp's OpScan falls through to getFreeRangeFuture(), the register
-#    RangeFuture over the OLD flat array. But OpInsert and OpPut go to
-#    getFreeFuture().doPut(), which is the skip vector. Those are disjoint:
+# 1. OUR E NOW MEASURES THE SKIP VECTOR. It did not until A10 landed: OpScan
+#    went to the register RangeFuture over the old flat array, so E's scans and
+#    its inserts touched two DISJOINT structures and the inserts never grew the
+#    thing being scanned. Every E number taken before that carried the caveat.
+#    It is gone -- the scan is now a real ordered walk over the skip vector,
+#    with a snapshot taken from the replicated counter.
 #
-#      95% scan   -> register array   (never written by this workload)
-#       5% insert -> skip vector      (never read by this workload)
+#    EXPECT A MUCH LOWER NUMBER THAN THE OLD ONE. The register path scanned a
+#    flat array with a bulk read; this walks an ordered structure node by node.
+#    The first cluster run came out at 34 kops against the register path's 290.
+#    That is not a regression, it is the first honest measurement.
 #
-#    So the insert half does NOT grow the structure being scanned, which is the
-#    main thing YCSB E is for and the reason dLSM's ycsb-e is interesting. Our
-#    column is therefore "95% reads of a static register array plus 5%
-#    unrelated skip-vector writes". It is a register-path baseline at best and
-#    must not be presented as a disco-skip E result. The genuinely useful
-#    output of this script today is the dLSM column, as the target number for
-#    when A10 lands.
-#
-#    (This also weakens the case for real inserts on our side specifically --
-#    they were chosen so both sides would grow during the run, and on our side
-#    they do not grow the scanned structure. Kept anyway: it costs nothing, it
-#    matches dLSM's op mix, and it is the right shape for when A10 makes the
-#    scan hit the skip vector.)
+#    RUNS IN --ts faa, NOT THE DEFAULT CLOCK. A snapshot and the vectors' ts
+#    must come from the same source, and at the measured epsilon (p99 ~56 us,
+#    clock-measurements.md §8) a clock-based snapshot would be linearizable only
+#    within a window ~28 operations wide. The counter is exact.
 #
 # 2. THE SCAN LENGTHS ARE MATCHED, AND THEY WERE NOT BEFORE. dLSM's ycsbc
 #    hardcoded `scan_len(1, 100)`; ours set maxscanlength=8. Mean ~50 against
@@ -87,8 +81,7 @@ mkdir -p "$OUT"
   echo "iter=$ITER warmup=$WARMUP servers=$SERVERS clients=$CLIENTS"
   echo "scan lengths: ${SCANLENS[*]}"
   echo "dlsm: mem=[$DLSM_MEM_NODES] compute=[$DLSM_COMPUTE_NODES] threads=$DLSM_THREADS"
-  echo "NOTE: the disco-skip column is the REGISTER range path, not the skip"
-  echo "      vector (A10 deferred). See the header of this script."
+  echo "NOTE: disco-skip runs --ts faa; a range needs the counter snapshot."
 } | tee "$OUT/params.txt"
 
 printf "\n%-6s %-20s %10s %7s %s\n" scanlen system total_kops nlogs notes \
@@ -98,13 +91,14 @@ echo "scanlen,system,servers,clients,total_kops,nlogs,per_client_kops,notes" \
 
 run_ours() {
   local n=$1
-  local label="disco-skip-reg"
+  local label="disco-skip"
   local folder="compare/e-$STAMP/scan$n/$label"
   local logdir="$OUT/scan$n-$label"
 
   ( cd "$ROOT_DIR" && timeout 1800 ./scripts/run.sh disco-skip-exe "$folder" \
       "oops-workloade-scan$n" "$SERVERS" "$CLIENTS" \
       -I "$ITER" -W "$WARMUP" --cache 1 --latency "${LATENCY:-1}" \
+      --ts faa \
       --maxrange "$n" \
       --vecs-per-client "$VECS" --nodes-per-client "$NODES" ) \
       > "$OUT/scan$n-$label.run" 2>&1
@@ -113,7 +107,6 @@ run_ours() {
   read -r total nlogs percsv <<<"$(total_kops disco-skip "$CLIENTS" "$logdir")"
   local notes; notes=$(run_warnings "$logdir")
   [ "$nlogs" -eq 0 ] && notes="$notes NO-TPUT-PARSED"
-  notes="$notes register-path-not-skipvector"
 
   printf "%-6s %-20s %10s %7s %s\n" "$n" "$label" "$total" "$nlogs" "$notes" \
       | tee -a "$OUT/summary.txt"

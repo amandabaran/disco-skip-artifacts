@@ -1,0 +1,163 @@
+Node arena:   262154 nodes, 0.0156256 GiB per memory server
+Vector arena: 500010 vectors, 0.149015 GiB per memory server -- caps writes at 500000 per client for the whole run
+Experiment: << Workload: /users/adb321/disco-skip-artifacts/workloads/oops-workloadc-uniform
+timestamps:   clock (disciplined CLOCK_REALTIME)
+cache:        off  offset-hint: on  async: 1  maxrange: 10  latency: on
+Selected device: uverbs0
+ibp8s0 uverbs0 NodeType::CA TransportType::IB
+Binded successfully (port_id, port_lid) = (1, 130)
+[CB:info] PD 'primary' registered
+[CB:info] Buffer 'shared-buf' of size 3520 allocated
+Client region: 3520 bytes
+[CB:info] Mr 'shared-mr' under PD 'primary' registered with buf 'shared-buf' (offset: 0, length: 3520) and rights 15
+[CB:info] Cq 'cq1' registered
+[CB:info] Cq 'cq2' registered
+[CB:info] Cq 'cq3' registered
+[CE:info] Publishing qp qp-4-for-1
+[CE:info] Publishing qp qp-4-for-2
+[CE:info] Publishing qp qp-4-for-3
+[CE:info] Connected to qp qp-1-for-4 with rights 15
+[CE:info] Connected to qp qp-2-for-4 with rights 15
+[CE:info] Connected to qp qp-3-for-4 with rights 15
+[CE:info] Unpublishing qp qp-4-for-1
+[CE:info] Unpublishing qp qp-4-for-2
+[CE:info] Unpublishing qp qp-4-for-3
+Bootstrap: wrote 5 nodes + 5 vectors (4 heads + 1 data node) to 3 replica(s)
+Querying YCSB for the set of initial key-pairs... Done.
+Inserting the initial key-pairs...  Done.
+Configuring Client 4
+Querying YCSB for the list of operations... Done. Packed 1000000 operations: 1000000 read, 0 update, 0 scan, 0 insert.
+Waiting for the initialization of other clients... Done.
+Running the benchmark (YCSB Swarm Engine)... 
+Done. Results:
+
+################ Cache:
+consulted:               no (no-cache baseline)
+heads bootstrapped:      yes
+levels:                  4
+node capacity:           16
+offset hint:             0.862 hit rate (692412 hit / 111037 miss)
+nodes allocated:         16442 of 262144
+vectors allocated:       133478 of 500000
+level 0: 1 nodes, 1 orphans, 0 entries
+level 1: 1 nodes, 1 orphans, 0 entries
+level 2: 1 nodes, 1 orphans, 0 entries
+level 3: 1 nodes, 1 orphans, 0 entries
+
+################ Counters:
+rdma_reads:              0
+rdma_cas_attempts:       0
+rdma_cas_failures:       0
+gets_with_writeback:     0
+gets_without_writeback:  0
+put_retries:             0
+
+################ Main stats:
+######## GET stats:
+Number of measurements: 5000.
+Average latency: 21.994us.
+0.1%: 14.720us.
+1%: 15.120us.
+2%: 15.280us.
+3%: 15.400us.
+4%: 15.500us.
+5%: 15.620us.
+6%: 15.740us.
+7%: 15.960us.
+8%: 16.840us.
+9%: 17.220us.
+10%: 17.400us.
+11%: 17.500us.
+12%: 17.580us.
+13%: 17.660us.
+14%: 17.740us.
+15%: 17.820us.
+16%: 17.880us.
+17%: 17.940us.
+18%: 18.040us.
+19%: 18.120us.
+20%: 18.200us.
+21%: 18.280us.
+22%: 18.360us.
+23%: 18.420us.
+24%: 18.480us.
+25%: 18.560us.
+26%: 18.600us.
+27%: 18.660us.
+28%: 18.740us.
+29%: 18.800us.
+30%: 18.880us.
+31%: 19.060us.
+32%: 19.560us.
+33%: 19.960us.
+34%: 20.200us.
+35%: 20.400us.
+36%: 20.500us.
+37%: 20.600us.
+38%: 20.600us.
+39%: 20.700us.
+40%: 20.800us.
+41%: 20.800us.
+42%: 20.900us.
+43%: 20.900us.
+44%: 21.000us.
+45%: 21.000us.
+46%: 21.100us.
+47%: 21.100us.
+48%: 21.100us.
+49%: 21.200us.
+50%: 21.300us.
+51%: 21.300us.
+52%: 21.400us.
+53%: 21.500us.
+54%: 21.600us.
+55%: 21.700us.
+56%: 21.800us.
+57%: 21.900us.
+58%: 22.100us.
+59%: 22.600us.
+60%: 23.000us.
+61%: 23.200us.
+62%: 23.400us.
+63%: 23.500us.
+64%: 23.600us.
+65%: 23.700us.
+66%: 23.800us.
+67%: 23.900us.
+68%: 23.900us.
+69%: 24.000us.
+70%: 24.100us.
+71%: 24.100us.
+72%: 24.200us.
+73%: 24.300us.
+74%: 24.300us.
+75%: 24.400us.
+76%: 24.500us.
+77%: 24.700us.
+78%: 24.800us.
+79%: 24.900us.
+80%: 25.200us.
+81%: 25.900us.
+82%: 26.300us.
+83%: 26.500us.
+84%: 26.700us.
+85%: 26.800us.
+86%: 26.900us.
+87%: 27.100us.
+88%: 27.200us.
+89%: 27.300us.
+90%: 27.500us.
+91%: 27.700us.
+92%: 28.100us.
+93%: 29.200us.
+94%: 29.600us.
+95%: 29.900us.
+96%: 30.300us.
+97%: 30.700us.
+98%: 32.200us.
+99%: 33.200us.
+99.9%: 36.700us.
+
+Local tput: 45 kops
+Local duration: 0s
+###DONE###

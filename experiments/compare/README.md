@@ -115,23 +115,27 @@ for one system.
 
 ## What the numbers do and do not say
 
-**The E column for disco-skip is not a skip-vector measurement, and its two
-halves touch different structures.** There is no skip-vector range — A10 is
-deferred — so `OpScan` falls through to `getFreeRangeFuture()`, the register
-`RangeFuture` over the old flat array. But `OpInsert`/`OpPut` go to
-`getFreeFuture().doPut()`, the skip vector. They are disjoint:
+**The E column is now a real skip-vector measurement** — A10 has landed. Until
+it did, `OpScan` went to the register `RangeFuture` over the old flat array
+while `OpInsert` went to the skip vector, so the two halves of E touched
+disjoint structures and the inserts never grew the thing being scanned. Any E
+number from before that carries the caveat and should be discarded.
 
-| share | op | structure | also written? |
-|---|---|---|---|
-| 95% | scan | register array | no |
-| 5% | insert | skip vector | not read |
+**Expect a much lower number than the old one.** The register path bulk-read a
+flat array; this walks an ordered structure node by node, taking a snapshot and
+reading each node's version as of it. The first cluster run came out at **34
+kops against the register path's 290**. That is not a regression — it is the
+first honest measurement, and the first one comparable with dLSM at all.
 
-So the inserts do **not** grow the structure being scanned, which is the whole
-point of YCSB E and the reason dLSM's `ycsb-e` is worth measuring. Our column
-amounts to "95% reads of a static register array plus 5% unrelated skip-vector
-writes". Treat the dLSM column as the useful output — the target number for
-when A10 lands — and our column as a register-path baseline at best. It must
-not be presented as a disco-skip E result.
+**E runs `--ts faa`, not the default clock.** A snapshot and the vectors' `ts`
+must come from the same source, and at the measured ε (p99 ≈ 56 µs,
+`clock-measurements.md` §8) a clock snapshot would be linearizable only within a
+window ~28 operations wide. The counter is exact, and a reader only READs it —
+never a fetch-and-add — so concurrent ranges do not contend.
+
+**`capped` is not a warning.** A YCSB scan is count-bounded and the upper key
+bound is open, so reaching the entry cap is how a scan that found enough entries
+is supposed to end. On a dense keyspace that is very nearly all of them.
 
 **Workload D is not stock D.** Stock D is read 0.95 / insert 0.05 over `latest`.
 `oops-workloadd-latest` keeps `latest` and moves the 5% to update, so it

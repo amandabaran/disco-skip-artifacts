@@ -1,0 +1,6 @@
+Running exp YCSB/workload-C/FUSEE/3servers/1client: fusee -w oops-workloadc-uniform -s 3 -c 1 -I 5000 -W 2000
+Setup 12 oops tmux............ ✓
+StartingSanitizing port 11211...
+Spawning isolated tmux registry...
+... (Waiting for servers to initialize).... ✓
+Running......  ✓

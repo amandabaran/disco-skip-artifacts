@@ -1,0 +1,286 @@
+Node arena:   1048586 nodes, 0.0625006 GiB per memory server
+Vector arena: 2000010 vectors, 0.596049 GiB per memory server -- caps writes at 500000 per client for the whole run
+Experiment: << Workload: /users/adb321/disco-skip-artifacts/workloads/oops-workloadd-latest
+timestamps:   clock (disciplined CLOCK_REALTIME)
+cache:        on  offset-hint: on  async: 1  maxrange: 10  latency: on
+Selected device: uverbs0
+ibp8s0 uverbs0 NodeType::CA TransportType::IB
+Binded successfully (port_id, port_lid) = (1, 130)
+[CB:info] PD 'primary' registered
+[CB:info] Buffer 'shared-buf' of size 3520 allocated
+Client region: 3520 bytes
+[CB:info] Mr 'shared-mr' under PD 'primary' registered with buf 'shared-buf' (offset: 0, length: 3520) and rights 15
+[CB:info] Cq 'cq1' registered
+[CB:info] Cq 'cq2' registered
+[CB:info] Cq 'cq3' registered
+[CB:info] Cq 'cq5' registered
+[CB:info] Cq 'cq6' registered
+[CB:info] Cq 'cq7' registered
+[CE:info] Publishing qp qp-4-for-1
+[CE:info] Publishing qp qp-4-for-2
+[CE:info] Publishing qp qp-4-for-3
+[CE:info] Publishing qp qp-4-for-5
+[CE:info] Publishing qp qp-4-for-6
+[CE:info] Publishing qp qp-4-for-7
+[CE:info] Connected to qp qp-1-for-4 with rights 15
+[CE:info] Connected to qp qp-2-for-4 with rights 15
+[CE:info] Connected to qp qp-3-for-4 with rights 15
+[CE:info] Connected to qp qp-5-for-4 with rights 15
+[CE:info] Connected to qp qp-6-for-4 with rights 15
+[CE:info] Connected to qp qp-7-for-4 with rights 15
+[CE:info] Unpublishing qp qp-4-for-1
+[CE:info] Unpublishing qp qp-4-for-2
+[CE:info] Unpublishing qp qp-4-for-3
+[CE:info] Unpublishing qp qp-4-for-5
+[CE:info] Unpublishing qp qp-4-for-6
+[CE:info] Unpublishing qp qp-4-for-7
+Bootstrap: wrote 5 nodes + 5 vectors (4 heads + 1 data node) to 3 replica(s)
+Querying YCSB for the set of initial key-pairs... Done.
+Inserting the initial key-pairs...  Done.
+Configuring Client 4
+Querying YCSB for the list of operations... Done. Packed 1000000 operations: 950163 read, 49837 update, 0 scan, 0 insert.
+Waiting for the initialization of other clients... Done.
+Running the benchmark (YCSB Swarm Engine)... 
+Done. Results:
+
+################ Cache:
+consulted:               yes
+heads bootstrapped:      yes
+levels:                  4
+node capacity:           16
+offset hint:             0.753 hit rate (426847 hit / 140275 miss)
+nodes allocated:         17124 of 262144
+vectors allocated:       145057 of 500000
+level 0: 2481 nodes, 510 orphans, 15133 entries
+level 1: 315 nodes, 63 orphans, 1971 entries
+level 2: 39 nodes, 10 orphans, 252 entries
+level 3: 2 nodes, 2 orphans, 29 entries
+
+################ Counters:
+rdma_reads:              0
+rdma_cas_attempts:       0
+rdma_cas_failures:       0
+gets_with_writeback:     0
+gets_without_writeback:  0
+put_retries:             0
+
+################ Main stats:
+######## GET stats:
+Number of measurements: 94957.
+Average latency: 4.166us.
+0.1%: 2.800us.
+1%: 2.840us.
+2%: 2.870us.
+3%: 2.900us.
+4%: 2.930us.
+5%: 2.970us.
+6%: 3.010us.
+7%: 3.060us.
+8%: 3.090us.
+9%: 3.110us.
+10%: 3.120us.
+11%: 3.130us.
+12%: 3.150us.
+13%: 3.160us.
+14%: 3.170us.
+15%: 3.180us.
+16%: 3.190us.
+17%: 3.200us.
+18%: 3.210us.
+19%: 3.220us.
+20%: 3.230us.
+21%: 3.240us.
+22%: 3.250us.
+23%: 3.260us.
+24%: 3.270us.
+25%: 3.280us.
+26%: 3.280us.
+27%: 3.290us.
+28%: 3.300us.
+29%: 3.310us.
+30%: 3.320us.
+31%: 3.320us.
+32%: 3.330us.
+33%: 3.330us.
+34%: 3.340us.
+35%: 3.350us.
+36%: 3.350us.
+37%: 3.360us.
+38%: 3.360us.
+39%: 3.370us.
+40%: 3.370us.
+41%: 3.380us.
+42%: 3.390us.
+43%: 3.400us.
+44%: 3.400us.
+45%: 3.410us.
+46%: 3.420us.
+47%: 3.430us.
+48%: 3.440us.
+49%: 3.450us.
+50%: 3.460us.
+51%: 3.470us.
+52%: 3.490us.
+53%: 3.500us.
+54%: 3.520us.
+55%: 3.550us.
+56%: 3.570us.
+57%: 3.600us.
+58%: 3.640us.
+59%: 3.670us.
+60%: 3.710us.
+61%: 3.750us.
+62%: 3.780us.
+63%: 3.810us.
+64%: 3.830us.
+65%: 3.860us.
+66%: 3.890us.
+67%: 3.920us.
+68%: 3.970us.
+69%: 4.010us.
+70%: 4.040us.
+71%: 4.070us.
+72%: 4.090us.
+73%: 4.120us.
+74%: 4.150us.
+75%: 4.180us.
+76%: 4.230us.
+77%: 4.310us.
+78%: 4.420us.
+79%: 4.690us.
+80%: 4.930us.
+81%: 5.090us.
+82%: 5.180us.
+83%: 5.280us.
+84%: 5.350us.
+85%: 5.400us.
+86%: 5.450us.
+87%: 5.510us.
+88%: 5.570us.
+89%: 5.620us.
+90%: 5.680us.
+91%: 5.740us.
+92%: 5.840us.
+93%: 5.990us.
+94%: 6.160us.
+95%: 6.330us.
+96%: 6.480us.
+97%: 6.730us.
+98%: 7.120us.
+99%: 8.430us.
+99.9%: 38.400us.
+######## PUT stats:
+Number of measurements: 5043.
+Average latency: 13.379us.
+0.1%: 6.850us.
+1%: 7.000us.
+2%: 7.080us.
+3%: 7.140us.
+4%: 7.190us.
+5%: 7.240us.
+6%: 7.280us.
+7%: 7.300us.
+8%: 7.330us.
+9%: 7.360us.
+10%: 7.390us.
+11%: 7.410us.
+12%: 7.440us.
+13%: 7.470us.
+14%: 7.490us.
+15%: 7.510us.
+16%: 7.530us.
+17%: 7.550us.
+18%: 7.570us.
+19%: 7.580us.
+20%: 7.600us.
+21%: 7.620us.
+22%: 7.640us.
+23%: 7.650us.
+24%: 7.680us.
+25%: 7.690us.
+26%: 7.700us.
+27%: 7.720us.
+28%: 7.730us.
+29%: 7.750us.
+30%: 7.760us.
+31%: 7.780us.
+32%: 7.800us.
+33%: 7.810us.
+34%: 7.840us.
+35%: 7.850us.
+36%: 7.870us.
+37%: 7.890us.
+38%: 7.910us.
+39%: 7.930us.
+40%: 7.940us.
+41%: 7.960us.
+42%: 7.990us.
+43%: 8.010us.
+44%: 8.030us.
+45%: 8.050us.
+46%: 8.070us.
+47%: 8.100us.
+48%: 8.130us.
+49%: 8.160us.
+50%: 8.180us.
+51%: 8.220us.
+52%: 8.260us.
+53%: 8.290us.
+54%: 8.320us.
+55%: 8.360us.
+56%: 8.400us.
+57%: 8.430us.
+58%: 8.450us.
+59%: 8.490us.
+60%: 8.520us.
+61%: 8.580us.
+62%: 8.620us.
+63%: 8.690us.
+64%: 8.760us.
+65%: 8.810us.
+66%: 8.920us.
+67%: 9.080us.
+68%: 9.240us.
+69%: 9.370us.
+70%: 9.490us.
+71%: 9.560us.
+72%: 9.640us.
+73%: 9.700us.
+74%: 9.790us.
+75%: 9.870us.
+76%: 9.980us.
+77%: 10.060us.
+78%: 10.180us.
+79%: 10.300us.
+80%: 10.440us.
+81%: 10.660us.
+82%: 10.820us.
+83%: 11.100us.
+84%: 11.460us.
+85%: 12.100us.
+86%: 31.300us.
+87%: 34.500us.
+88%: 36.100us.
+89%: 37.300us.
+90%: 38.600us.
+91%: 39.800us.
+92%: 41.100us.
+93%: 42.400us.
+94%: 43.600us.
+95%: 45.100us.
+96%: 47.100us.
+97%: 49.500us.
+98%: 51.800us.
+99%: 57.000us.
+99.9%: 71.200us.
+
+
+################ Operations:
+gets:         178085 ok, 0 not-found, 0 FAILED
+              175745 cache hits, 1 misses, 2339 kmin mismatch
+puts:         109415 resolved, 0 FAILED (95404 height-0, 14011 structural)
+              95368 hinted, 36 hint misses, 20506 hint rejected
+writes:       110799 published, 10 cas lost, 2495 retries, 0 retry-budget exhausted
+Local tput: 212 kops
+Local duration: 0s
+###DONE###

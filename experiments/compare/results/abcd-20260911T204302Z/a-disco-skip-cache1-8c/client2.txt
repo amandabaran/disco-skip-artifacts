@@ -1,0 +1,292 @@
+Node arena:   2097162 nodes, 0.125001 GiB per memory server
+Vector arena: 4000010 vectors, 1.1921 GiB per memory server -- caps writes at 500000 per client for the whole run
+Experiment: << Workload: /users/adb321/disco-skip-artifacts/workloads/oops-workloada-uniform
+timestamps:   clock (disciplined CLOCK_REALTIME)
+cache:        on  offset-hint: on  async: 1  maxrange: 10  latency: on
+Selected device: uverbs0
+mlx4_0 uverbs0 NodeType::CA TransportType::IB
+Binded successfully (port_id, port_lid) = (1, 68)
+[CB:info] PD 'primary' registered
+[CB:info] Buffer 'shared-buf' of size 3520 allocated
+Client region: 3520 bytes
+[CB:info] Mr 'shared-mr' under PD 'primary' registered with buf 'shared-buf' (offset: 0, length: 3520) and rights 15
+[CB:info] Cq 'cq1' registered
+[CB:info] Cq 'cq2' registered
+[CB:info] Cq 'cq3' registered
+[CB:info] Cq 'cq4' registered
+[CB:info] Cq 'cq6' registered
+[CB:info] Cq 'cq7' registered
+[CB:info] Cq 'cq8' registered
+[CB:info] Cq 'cq9' registered
+[CB:info] Cq 'cq10' registered
+[CB:info] Cq 'cq11' registered
+[CE:info] Publishing qp qp-5-for-1
+[CE:info] Publishing qp qp-5-for-2
+[CE:info] Publishing qp qp-5-for-3
+[CE:info] Publishing qp qp-5-for-4
+[CE:info] Publishing qp qp-5-for-6
+[CE:info] Publishing qp qp-5-for-7
+[CE:info] Publishing qp qp-5-for-8
+[CE:info] Publishing qp qp-5-for-9
+[CE:info] Publishing qp qp-5-for-10
+[CE:info] Publishing qp qp-5-for-11
+[CE:info] Connected to qp qp-1-for-5 with rights 15
+[CE:info] Connected to qp qp-2-for-5 with rights 15
+[CE:info] Connected to qp qp-3-for-5 with rights 15
+[CE:info] Connected to qp qp-4-for-5 with rights 15
+[CE:info] Connected to qp qp-6-for-5 with rights 15
+[CE:info] Connected to qp qp-7-for-5 with rights 15
+[CE:info] Connected to qp qp-8-for-5 with rights 15
+[CE:info] Connected to qp qp-9-for-5 with rights 15
+[CE:info] Connected to qp qp-10-for-5 with rights 15
+[CE:info] Connected to qp qp-11-for-5 with rights 15
+[CE:info] Unpublishing qp qp-5-for-1
+[CE:info] Unpublishing qp qp-5-for-2
+[CE:info] Unpublishing qp qp-5-for-3
+[CE:info] Unpublishing qp qp-5-for-4
+[CE:info] Unpublishing qp qp-5-for-6
+[CE:info] Unpublishing qp qp-5-for-7
+[CE:info] Unpublishing qp qp-5-for-8
+[CE:info] Unpublishing qp qp-5-for-9
+[CE:info] Unpublishing qp qp-5-for-10
+[CE:info] Unpublishing qp qp-5-for-11
+Configuring Client 5
+Querying YCSB for the list of operations... Done. Packed 1000000 operations: 499634 read, 500366 update, 0 scan, 0 insert.
+Waiting for the initialization of other clients... Done.
+Running the benchmark (YCSB Swarm Engine)... 
+Done. Results:
+
+################ Cache:
+consulted:               yes
+heads bootstrapped:      yes
+levels:                  4
+node capacity:           16
+offset hint:             0.774 hit rate (686218 hit / 199946 miss)
+nodes allocated:         6570 of 262144
+vectors allocated:       114230 of 500000
+level 0: 9828 nodes, 28 orphans, 41214 entries
+level 1: 1674 nodes, 263 orphans, 9800 entries
+level 2: 225 nodes, 42 orphans, 1411 entries
+level 3: 24 nodes, 13 orphans, 183 entries
+
+################ Counters:
+rdma_reads:              0
+rdma_cas_attempts:       0
+rdma_cas_failures:       0
+gets_with_writeback:     0
+gets_without_writeback:  0
+put_retries:             0
+
+################ Main stats:
+######## GET stats:
+Number of measurements: 49917.
+Average latency: 20.224us.
+0.1%: 3.420us.
+1%: 3.890us.
+2%: 4.080us.
+3%: 4.190us.
+4%: 4.260us.
+5%: 4.340us.
+6%: 4.450us.
+7%: 4.540us.
+8%: 4.640us.
+9%: 4.740us.
+10%: 4.890us.
+11%: 5.050us.
+12%: 5.270us.
+13%: 5.590us.
+14%: 5.960us.
+15%: 6.300us.
+16%: 6.480us.
+17%: 6.600us.
+18%: 6.720us.
+19%: 6.810us.
+20%: 6.890us.
+21%: 6.950us.
+22%: 7.000us.
+23%: 7.050us.
+24%: 7.100us.
+25%: 7.150us.
+26%: 7.190us.
+27%: 7.230us.
+28%: 7.260us.
+29%: 7.290us.
+30%: 7.330us.
+31%: 7.360us.
+32%: 7.400us.
+33%: 7.430us.
+34%: 7.460us.
+35%: 7.500us.
+36%: 7.530us.
+37%: 7.570us.
+38%: 7.600us.
+39%: 7.630us.
+40%: 7.660us.
+41%: 7.700us.
+42%: 7.730us.
+43%: 7.770us.
+44%: 7.800us.
+45%: 7.840us.
+46%: 7.880us.
+47%: 7.910us.
+48%: 7.950us.
+49%: 7.990us.
+50%: 8.040us.
+51%: 8.080us.
+52%: 8.120us.
+53%: 8.170us.
+54%: 8.220us.
+55%: 8.270us.
+56%: 8.320us.
+57%: 8.380us.
+58%: 8.440us.
+59%: 8.490us.
+60%: 8.560us.
+61%: 8.620us.
+62%: 8.690us.
+63%: 8.770us.
+64%: 8.850us.
+65%: 8.940us.
+66%: 9.050us.
+67%: 9.180us.
+68%: 9.330us.
+69%: 9.530us.
+70%: 9.810us.
+71%: 10.340us.
+72%: 12.700us.
+73%: 29.800us.
+74%: 32.700us.
+75%: 34.800us.
+76%: 36.700us.
+77%: 38.500us.
+78%: 40.200us.
+79%: 41.800us.
+80%: 43.400us.
+81%: 44.900us.
+82%: 46.400us.
+83%: 47.900us.
+84%: 49.200us.
+85%: 50.800us.
+86%: 52.200us.
+87%: 53.400us.
+88%: 55.000us.
+89%: 56.600us.
+90%: 58.200us.
+91%: 60.200us.
+92%: 62.200us.
+93%: 64.600us.
+94%: 67.000us.
+95%: 69.800us.
+96%: 72.800us.
+97%: 75.800us.
+98%: 79.000us.
+99%: 83.400us.
+99.9%: 92.200us.
+######## PUT stats:
+Number of measurements: 50083.
+Average latency: 31.504us.
+0.1%: 7.660us.
+1%: 8.200us.
+2%: 8.410us.
+3%: 8.570us.
+4%: 8.710us.
+5%: 8.840us.
+6%: 8.970us.
+7%: 9.140us.
+8%: 9.320us.
+9%: 9.510us.
+10%: 9.740us.
+11%: 10.040us.
+12%: 10.360us.
+13%: 10.660us.
+14%: 10.860us.
+15%: 11.000us.
+16%: 11.120us.
+17%: 11.220us.
+18%: 11.300us.
+19%: 11.380us.
+20%: 11.440us.
+21%: 11.500us.
+22%: 11.560us.
+23%: 11.620us.
+24%: 11.660us.
+25%: 11.720us.
+26%: 11.760us.
+27%: 11.800us.
+28%: 11.860us.
+29%: 11.900us.
+30%: 11.940us.
+31%: 12.000us.
+32%: 12.040us.
+33%: 12.080us.
+34%: 12.140us.
+35%: 12.180us.
+36%: 12.240us.
+37%: 12.280us.
+38%: 12.340us.
+39%: 12.380us.
+40%: 12.420us.
+41%: 12.480us.
+42%: 12.540us.
+43%: 12.580us.
+44%: 12.640us.
+45%: 12.700us.
+46%: 12.760us.
+47%: 12.820us.
+48%: 12.880us.
+49%: 12.940us.
+50%: 13.020us.
+51%: 13.100us.
+52%: 13.180us.
+53%: 13.260us.
+54%: 13.360us.
+55%: 13.460us.
+56%: 13.580us.
+57%: 13.720us.
+58%: 13.880us.
+59%: 14.060us.
+60%: 14.300us.
+61%: 14.640us.
+62%: 15.180us.
+63%: 16.860us.
+64%: 37.900us.
+65%: 41.500us.
+66%: 43.800us.
+67%: 45.700us.
+68%: 47.300us.
+69%: 48.800us.
+70%: 50.400us.
+71%: 51.600us.
+72%: 52.800us.
+73%: 54.000us.
+74%: 55.200us.
+75%: 56.400us.
+76%: 57.600us.
+77%: 58.600us.
+78%: 59.800us.
+79%: 61.000us.
+80%: 62.000us.
+81%: 63.200us.
+82%: 64.400us.
+83%: 65.400us.
+84%: 66.600us.
+85%: 67.800us.
+86%: 69.200us.
+87%: 70.600us.
+88%: 72.000us.
+89%: 73.400us.
+90%: 75.400us.
+91%: 77.200us.
+92%: 79.000us.
+93%: 81.000us.
+94%: 83.000us.
+95%: 85.200us.
+96%: 87.400us.
+97%: 90.000us.
+98%: 93.600us.
+99%: 98.000us.
+99.9%: 115.000us.
+
+Local tput: 38 kops
+Local duration: 2s
+###DONE###

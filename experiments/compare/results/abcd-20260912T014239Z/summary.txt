@@ -1,0 +1,24 @@
+
+wl  system                  clients total_kops   nlogs notes
+
+d   disco-skip-cache1             1        244       1  ARENA-EXHAUSTED
+d   disco-skip-cache0             1         49       1  ARENA-EXHAUSTED
+d   swarm-kv                      1        256       1 
+d   fusee                         1        241       1 
+
+d   disco-skip-cache1             2        440       2  ARENA-EXHAUSTED
+d   disco-skip-cache0             2         96       2  ARENA-EXHAUSTED
+d   swarm-kv                      2        505       2 
+d   fusee                         2        406       2 
+
+d   disco-skip-cache1             4        752       4  ARENA-EXHAUSTED
+d   disco-skip-cache0             4        180       4  ARENA-EXHAUSTED
+d   swarm-kv                      4        969       4 
+d   fusee                         4        929       4 
+
+d   disco-skip-cache1             8        923       8  ARENA-EXHAUSTED
+d   disco-skip-cache0             8        328       8  ARENA-EXHAUSTED
+d   swarm-kv                      8       1699       8 
+d   fusee                         8       1528       8 
+
+results -> /users/adb321/disco-skip-artifacts/experiments/compare/results/abcd-20260912T014239Z

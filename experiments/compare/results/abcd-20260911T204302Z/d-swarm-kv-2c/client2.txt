@@ -1,0 +1,382 @@
+Workload: /users/adb321/disco-skip-artifacts/workloads/oops-workloadd-latest
+Log entry size: 136
+KV entry size: 120
+Selected device: uverbs0
+mlx4_0 uverbs0 NodeType::CA TransportType::IB
+Binded successfully (port_id, port_lid) = (1, 68)
+[CB:info] PD 'primary' registered
+[CB:info] Buffer 'shared-buf' of size 768 allocated
+[CB:info] Mr 'shared-mr' under PD 'primary' registered with buf 'shared-buf' (offset: 0, length: 768) and rights 15
+[CB:info] Cq 'cq1' registered
+[CB:info] Cq 'cq2' registered
+[CB:info] Cq 'cq3' registered
+[CB:info] Cq 'cq4' registered
+[CE:info] Publishing qp qp-5-for-1
+[CE:info] Publishing qp qp-5-for-2
+[CE:info] Publishing qp qp-5-for-3
+[CE:info] Publishing qp qp-5-for-4
+[CE:info] Connected to qp qp-1-for-5 with rights 15
+[CE:info] Connected to qp qp-2-for-5 with rights 15
+[CE:info] Connected to qp qp-3-for-5 with rights 15
+[CE:info] Connected to qp qp-4-for-5 with rights 15
+[CE:info] Unpublishing qp qp-5-for-1
+[CE:info] Unpublishing qp qp-5-for-2
+[CE:info] Unpublishing qp qp-5-for-3
+[CE:info] Unpublishing qp qp-5-for-4
+[CB:info] PD 'pd' registered
+[CB:info] Buffer 'buf' of size 24576 allocated
+[CB:info] Mr 'mr' under PD 'pd' registered with buf 'buf' (offset: 0, length: 24576) and rights 15
+[CB:info] Cq 'index-cq' registered
+[CE:info] Publishing qp default-race-qp-5-for-1
+[CE:info] Publishing qp default-race-qp-5-for-2
+[CE:info] Publishing qp default-race-qp-5-for-3
+[IndexClient:info] Connecting...
+[CE:info] Connected to qp default-race-qp-1-for-5 with rights 15
+[CE:info] Connected to qp default-race-qp-2-for-5 with rights 15
+[CE:info] Connected to qp default-race-qp-3-for-5 with rights 15
+[IndexClient:info] Connected!
+[IndexClient:info] RDMA buffer: 105254735951488 to 105254735976064
+[CE:info] Unpublishing qp default-race-qp-5-for-1
+[CE:info] Unpublishing qp default-race-qp-5-for-2
+[CE:info] Unpublishing qp default-race-qp-5-for-3
+Querying YCSB for the list of operations... Done.
+Waiting for the initialization of other clients... Done.
+Running the benchmark... 
+Done. Results:
+
+################ Step-counts stats:
+######## UnreliableMaxRegFuture steps counts:
+TryReadAll: 284538
+ReadLog: 138
+TryWriteAll: 15549
+ReplicateAllAndReadNotifs: 1
+WriteTsAndIn: 15549
+WriteTs: 8
+ReadNotifs: 2
+######## OopsDataFuture steps counts:
+WTryOptimisticTs: 5183
+WPrepareToRepare: 1
+WTryRepare: 1
+RReading: 94846
+ReplicateAsVerified: 94817
+WriteTsAsVerified: 5183
+
+################ Main stats:
+######## SEARCH stats:
+cache-hits: 82.929%
+Number of measurements: 100000.
+Average latency: 1us.
+0.1%: 85ns.
+1%: 105ns.
+2%: 120ns.
+3%: 140ns.
+4%: 155ns.
+5%: 165ns.
+6%: 185ns.
+7%: 195ns.
+8%: 205ns.
+9%: 210ns.
+10%: 215ns.
+11%: 225ns.
+12%: 225ns.
+13%: 235ns.
+14%: 235ns.
+15%: 245ns.
+16%: 245ns.
+17%: 255ns.
+18%: 255ns.
+19%: 265ns.
+20%: 265ns.
+21%: 275ns.
+22%: 280ns.
+23%: 285ns.
+24%: 295ns.
+25%: 300ns.
+26%: 305ns.
+27%: 315ns.
+28%: 315ns.
+29%: 320ns.
+30%: 325ns.
+31%: 325ns.
+32%: 330ns.
+33%: 335ns.
+34%: 335ns.
+35%: 340ns.
+36%: 345ns.
+37%: 345ns.
+38%: 350ns.
+39%: 355ns.
+40%: 355ns.
+41%: 360ns.
+42%: 365ns.
+43%: 365ns.
+44%: 370ns.
+45%: 375ns.
+46%: 375ns.
+47%: 380ns.
+48%: 385ns.
+49%: 390ns.
+50%: 395ns.
+51%: 395ns.
+52%: 405ns.
+53%: 405ns.
+54%: 415ns.
+55%: 415ns.
+56%: 425ns.
+57%: 430ns.
+58%: 435ns.
+59%: 440ns.
+60%: 445ns.
+61%: 450ns.
+62%: 455ns.
+63%: 455ns.
+64%: 465ns.
+65%: 465ns.
+66%: 470ns.
+67%: 475ns.
+68%: 480ns.
+69%: 485ns.
+70%: 495ns.
+71%: 495ns.
+72%: 505ns.
+73%: 515ns.
+74%: 520ns.
+75%: 525ns.
+76%: 535ns.
+77%: 550ns.
+78%: 565ns.
+79%: 585ns.
+80%: 605ns.
+81%: 640ns.
+82%: 695ns.
+83%: 2us.
+84%: 3us.
+85%: 3us.
+86%: 3us.
+87%: 3us.
+88%: 4us.
+89%: 4us.
+90%: 4us.
+91%: 4us.
+92%: 4us.
+93%: 4us.
+94%: 4us.
+95%: 4us.
+96%: 4us.
+97%: 4us.
+98%: 4us.
+99%: 5us.
+99.9%: 10us.
+######## GET stats:
+Number of measurements: 94817.
+Average latency: 4us.
+0.1%: 2us.
+1%: 2us.
+2%: 2us.
+3%: 2us.
+4%: 2us.
+5%: 2us.
+6%: 2us.
+7%: 2us.
+8%: 2us.
+9%: 2us.
+10%: 3us.
+11%: 3us.
+12%: 3us.
+13%: 3us.
+14%: 3us.
+15%: 3us.
+16%: 3us.
+17%: 3us.
+18%: 3us.
+19%: 3us.
+20%: 3us.
+21%: 3us.
+22%: 3us.
+23%: 3us.
+24%: 3us.
+25%: 4us.
+26%: 4us.
+27%: 4us.
+28%: 4us.
+29%: 4us.
+30%: 4us.
+31%: 4us.
+32%: 4us.
+33%: 4us.
+34%: 4us.
+35%: 4us.
+36%: 4us.
+37%: 4us.
+38%: 4us.
+39%: 4us.
+40%: 4us.
+41%: 4us.
+42%: 4us.
+43%: 4us.
+44%: 4us.
+45%: 4us.
+46%: 4us.
+47%: 4us.
+48%: 4us.
+49%: 4us.
+50%: 4us.
+51%: 4us.
+52%: 4us.
+53%: 4us.
+54%: 4us.
+55%: 4us.
+56%: 4us.
+57%: 4us.
+58%: 4us.
+59%: 4us.
+60%: 4us.
+61%: 4us.
+62%: 4us.
+63%: 4us.
+64%: 4us.
+65%: 4us.
+66%: 4us.
+67%: 4us.
+68%: 4us.
+69%: 4us.
+70%: 4us.
+71%: 4us.
+72%: 4us.
+73%: 4us.
+74%: 4us.
+75%: 4us.
+76%: 4us.
+77%: 4us.
+78%: 4us.
+79%: 4us.
+80%: 4us.
+81%: 5us.
+82%: 5us.
+83%: 6us.
+84%: 7us.
+85%: 7us.
+86%: 8us.
+87%: 8us.
+88%: 8us.
+89%: 8us.
+90%: 8us.
+91%: 8us.
+92%: 8us.
+93%: 8us.
+94%: 9us.
+95%: 9us.
+96%: 9us.
+97%: 9us.
+98%: 9us.
+99%: 10us.
+99.9%: 19us.
+######## UPDATE stats:
+Number of measurements: 5183.
+Average latency: 7us.
+0.1%: 3us.
+1%: 3us.
+2%: 3us.
+3%: 3us.
+4%: 3us.
+5%: 3us.
+6%: 4us.
+7%: 4us.
+8%: 4us.
+9%: 4us.
+10%: 4us.
+11%: 4us.
+12%: 4us.
+13%: 4us.
+14%: 5us.
+15%: 5us.
+16%: 5us.
+17%: 5us.
+18%: 5us.
+19%: 5us.
+20%: 5us.
+21%: 5us.
+22%: 5us.
+23%: 5us.
+24%: 5us.
+25%: 5us.
+26%: 5us.
+27%: 5us.
+28%: 5us.
+29%: 6us.
+30%: 6us.
+31%: 6us.
+32%: 6us.
+33%: 6us.
+34%: 6us.
+35%: 6us.
+36%: 6us.
+37%: 6us.
+38%: 6us.
+39%: 6us.
+40%: 6us.
+41%: 6us.
+42%: 6us.
+43%: 6us.
+44%: 6us.
+45%: 6us.
+46%: 6us.
+47%: 6us.
+48%: 6us.
+49%: 6us.
+50%: 6us.
+51%: 6us.
+52%: 6us.
+53%: 6us.
+54%: 6us.
+55%: 6us.
+56%: 6us.
+57%: 6us.
+58%: 6us.
+59%: 6us.
+60%: 6us.
+61%: 6us.
+62%: 6us.
+63%: 6us.
+64%: 6us.
+65%: 6us.
+66%: 6us.
+67%: 6us.
+68%: 6us.
+69%: 6us.
+70%: 6us.
+71%: 6us.
+72%: 6us.
+73%: 6us.
+74%: 6us.
+75%: 6us.
+76%: 7us.
+77%: 7us.
+78%: 7us.
+79%: 9us.
+80%: 9us.
+81%: 10us.
+82%: 10us.
+83%: 10us.
+84%: 11us.
+85%: 13us.
+86%: 13us.
+87%: 13us.
+88%: 14us.
+89%: 14us.
+90%: 14us.
+91%: 14us.
+92%: 14us.
+93%: 14us.
+94%: 14us.
+95%: 14us.
+96%: 15us.
+97%: 15us.
+98%: 15us.
+99%: 15us.
+99.9%: 25us.
+
+Average Macro Scan Latency: N/A (No scan operations occurred during measurement window)
+Local tput: 179kpos
+Local duration: 0s
+###DONE###

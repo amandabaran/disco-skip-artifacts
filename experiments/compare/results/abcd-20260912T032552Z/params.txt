@@ -1,0 +1,5 @@
+ycsb-abcd  20260912T032552Z
+iter=100000 warmup=50000 servers=3 clients=[8] async=1 latency=1
+logs: logs/YCSB/workload-<L>/<SCHEME>/3servers/<nc>client/ (plot-datapoints layout)
+vecs/client=500000 nodes/client=262144
+metric: SUM of per-client kops (fusee's aggregate divided by clients)

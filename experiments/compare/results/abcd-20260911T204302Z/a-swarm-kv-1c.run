@@ -1,0 +1,6 @@
+Running exp YCSB/workload-A/SWARM-KV/3servers/1client: swarmkv -w oops-workloada-uniform -s 3 -c 1 -I 100000 -W 50000 -a 1
+Setup 12 oops tmux............ ✓
+StartingSanitizing port 11211...
+Spawning isolated tmux registry...
+... (Waiting for servers to initialize).... ✓
+Running........  ✓

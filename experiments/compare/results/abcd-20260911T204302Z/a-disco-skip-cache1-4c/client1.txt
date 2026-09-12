@@ -1,0 +1,279 @@
+Node arena:   1048586 nodes, 0.0625006 GiB per memory server
+Vector arena: 2000010 vectors, 0.596049 GiB per memory server -- caps writes at 500000 per client for the whole run
+Experiment: << Workload: /users/adb321/disco-skip-artifacts/workloads/oops-workloada-uniform
+timestamps:   clock (disciplined CLOCK_REALTIME)
+cache:        on  offset-hint: on  async: 1  maxrange: 10  latency: on
+Selected device: uverbs0
+ibp8s0 uverbs0 NodeType::CA TransportType::IB
+Binded successfully (port_id, port_lid) = (1, 130)
+[CB:info] PD 'primary' registered
+[CB:info] Buffer 'shared-buf' of size 3520 allocated
+Client region: 3520 bytes
+[CB:info] Mr 'shared-mr' under PD 'primary' registered with buf 'shared-buf' (offset: 0, length: 3520) and rights 15
+[CB:info] Cq 'cq1' registered
+[CB:info] Cq 'cq2' registered
+[CB:info] Cq 'cq3' registered
+[CB:info] Cq 'cq5' registered
+[CB:info] Cq 'cq6' registered
+[CB:info] Cq 'cq7' registered
+[CE:info] Publishing qp qp-4-for-1
+[CE:info] Publishing qp qp-4-for-2
+[CE:info] Publishing qp qp-4-for-3
+[CE:info] Publishing qp qp-4-for-5
+[CE:info] Publishing qp qp-4-for-6
+[CE:info] Publishing qp qp-4-for-7
+[CE:info] Connected to qp qp-1-for-4 with rights 15
+[CE:info] Connected to qp qp-2-for-4 with rights 15
+[CE:info] Connected to qp qp-3-for-4 with rights 15
+[CE:info] Connected to qp qp-5-for-4 with rights 15
+[CE:info] Connected to qp qp-6-for-4 with rights 15
+[CE:info] Connected to qp qp-7-for-4 with rights 15
+[CE:info] Unpublishing qp qp-4-for-1
+[CE:info] Unpublishing qp qp-4-for-2
+[CE:info] Unpublishing qp qp-4-for-3
+[CE:info] Unpublishing qp qp-4-for-5
+[CE:info] Unpublishing qp qp-4-for-6
+[CE:info] Unpublishing qp qp-4-for-7
+Bootstrap: wrote 5 nodes + 5 vectors (4 heads + 1 data node) to 3 replica(s)
+Querying YCSB for the set of initial key-pairs... Done.
+Inserting the initial key-pairs...  Done.
+Configuring Client 4
+Querying YCSB for the list of operations... Done. Packed 1000000 operations: 500202 read, 499798 update, 0 scan, 0 insert.
+Waiting for the initialization of other clients... Done.
+Running the benchmark (YCSB Swarm Engine)... 
+Done. Results:
+
+################ Cache:
+consulted:               yes
+heads bootstrapped:      yes
+levels:                  4
+node capacity:           16
+offset hint:             0.672 hit rate (533634 hit / 260765 miss)
+nodes allocated:         25528 of 262144
+vectors allocated:       250481 of 500000
+level 0: 5972 nodes, 775 orphans, 30531 entries
+level 1: 857 nodes, 157 orphans, 5197 entries
+level 2: 113 nodes, 24 orphans, 700 entries
+level 3: 10 nodes, 7 orphans, 89 entries
+
+################ Counters:
+rdma_reads:              0
+rdma_cas_attempts:       0
+rdma_cas_failures:       0
+gets_with_writeback:     0
+gets_without_writeback:  0
+put_retries:             0
+
+################ Main stats:
+######## GET stats:
+Number of measurements: 49812.
+Average latency: 9.404us.
+0.1%: 3.170us.
+1%: 3.400us.
+2%: 3.450us.
+3%: 3.510us.
+4%: 3.610us.
+5%: 3.770us.
+6%: 3.830us.
+7%: 3.870us.
+8%: 3.900us.
+9%: 3.940us.
+10%: 3.990us.
+11%: 4.040us.
+12%: 4.090us.
+13%: 4.130us.
+14%: 4.160us.
+15%: 4.180us.
+16%: 4.210us.
+17%: 4.240us.
+18%: 4.280us.
+19%: 4.330us.
+20%: 4.390us.
+21%: 4.460us.
+22%: 4.540us.
+23%: 4.640us.
+24%: 4.810us.
+25%: 5.170us.
+26%: 5.520us.
+27%: 5.670us.
+28%: 5.750us.
+29%: 5.840us.
+30%: 5.950us.
+31%: 6.050us.
+32%: 6.120us.
+33%: 6.170us.
+34%: 6.210us.
+35%: 6.250us.
+36%: 6.290us.
+37%: 6.330us.
+38%: 6.370us.
+39%: 6.410us.
+40%: 6.440us.
+41%: 6.470us.
+42%: 6.490us.
+43%: 6.520us.
+44%: 6.550us.
+45%: 6.580us.
+46%: 6.610us.
+47%: 6.640us.
+48%: 6.670us.
+49%: 6.690us.
+50%: 6.720us.
+51%: 6.760us.
+52%: 6.780us.
+53%: 6.810us.
+54%: 6.840us.
+55%: 6.860us.
+56%: 6.890us.
+57%: 6.910us.
+58%: 6.930us.
+59%: 6.950us.
+60%: 6.970us.
+61%: 6.990us.
+62%: 7.010us.
+63%: 7.040us.
+64%: 7.060us.
+65%: 7.080us.
+66%: 7.100us.
+67%: 7.130us.
+68%: 7.160us.
+69%: 7.180us.
+70%: 7.200us.
+71%: 7.220us.
+72%: 7.250us.
+73%: 7.270us.
+74%: 7.290us.
+75%: 7.320us.
+76%: 7.350us.
+77%: 7.380us.
+78%: 7.420us.
+79%: 7.460us.
+80%: 7.500us.
+81%: 7.550us.
+82%: 7.610us.
+83%: 7.670us.
+84%: 7.740us.
+85%: 7.830us.
+86%: 7.960us.
+87%: 8.130us.
+88%: 8.410us.
+89%: 10.200us.
+90%: 26.800us.
+91%: 29.600us.
+92%: 31.600us.
+93%: 33.300us.
+94%: 35.100us.
+95%: 37.000us.
+96%: 39.100us.
+97%: 41.300us.
+98%: 43.800us.
+99%: 47.600us.
+99.9%: 56.000us.
+######## PUT stats:
+Number of measurements: 50188.
+Average latency: 19.043us.
+0.1%: 7.290us.
+1%: 7.550us.
+2%: 7.700us.
+3%: 7.820us.
+4%: 7.930us.
+5%: 8.020us.
+6%: 8.100us.
+7%: 8.170us.
+8%: 8.220us.
+9%: 8.280us.
+10%: 8.340us.
+11%: 8.390us.
+12%: 8.440us.
+13%: 8.490us.
+14%: 8.550us.
+15%: 8.610us.
+16%: 8.680us.
+17%: 8.760us.
+18%: 8.850us.
+19%: 8.960us.
+20%: 9.110us.
+21%: 9.300us.
+22%: 9.530us.
+23%: 9.730us.
+24%: 9.920us.
+25%: 10.060us.
+26%: 10.160us.
+27%: 10.260us.
+28%: 10.340us.
+29%: 10.400us.
+30%: 10.460us.
+31%: 10.520us.
+32%: 10.560us.
+33%: 10.620us.
+34%: 10.660us.
+35%: 10.700us.
+36%: 10.740us.
+37%: 10.780us.
+38%: 10.820us.
+39%: 10.860us.
+40%: 10.900us.
+41%: 10.940us.
+42%: 10.980us.
+43%: 11.000us.
+44%: 11.040us.
+45%: 11.080us.
+46%: 11.100us.
+47%: 11.140us.
+48%: 11.160us.
+49%: 11.200us.
+50%: 11.240us.
+51%: 11.260us.
+52%: 11.300us.
+53%: 11.320us.
+54%: 11.360us.
+55%: 11.380us.
+56%: 11.420us.
+57%: 11.440us.
+58%: 11.480us.
+59%: 11.520us.
+60%: 11.540us.
+61%: 11.580us.
+62%: 11.620us.
+63%: 11.660us.
+64%: 11.700us.
+65%: 11.740us.
+66%: 11.780us.
+67%: 11.840us.
+68%: 11.880us.
+69%: 11.940us.
+70%: 12.000us.
+71%: 12.080us.
+72%: 12.160us.
+73%: 12.280us.
+74%: 12.400us.
+75%: 12.580us.
+76%: 12.800us.
+77%: 13.240us.
+78%: 15.980us.
+79%: 35.300us.
+80%: 37.800us.
+81%: 39.600us.
+82%: 41.200us.
+83%: 42.400us.
+84%: 43.600us.
+85%: 44.700us.
+86%: 45.800us.
+87%: 46.800us.
+88%: 47.800us.
+89%: 48.800us.
+90%: 49.900us.
+91%: 51.000us.
+92%: 52.200us.
+93%: 53.400us.
+94%: 54.800us.
+95%: 56.400us.
+96%: 58.200us.
+97%: 60.200us.
+98%: 62.800us.
+99%: 67.400us.
+99.9%: 83.400us.
+
+Local tput: 69 kops
+Local duration: 1s
+###DONE###
