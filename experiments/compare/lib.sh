@@ -99,8 +99,15 @@ run_warnings() {
 
   # Arena: allocated vs capacity, per client, worst case.
   local spent
-  spent=$(grep -ohE "vectors allocated: +[0-9]+ of [0-9]+" "$dir"/client*.txt 2>/dev/null \
-          | awk '{ if ($4 >= $6 * 0.98) print "spent" }' | head -1)
+  # Fields of "vectors allocated:       144833 of 500000" are
+  #   $1=vectors $2=allocated: $3=144833 $4=of $5=500000
+  # The first version compared $4 against $6 -- the literal string "of" against
+  # nothing -- so it evaluated 0 >= 0 and flagged EVERY arm. Second false
+  # positive on this same check in one session; the numbers are extracted by
+  # name here rather than by counting columns.
+  spent=$(grep -ohE "vectors allocated: +[0-9]+ of +[0-9]+" "$dir"/client*.txt 2>/dev/null \
+          | sed -E 's/.*: +([0-9]+) of +([0-9]+)/\1 \2/' \
+          | awk '$2 > 0 && $1 >= $2 * 0.98 { print "spent" }' | head -1)
   [ -n "$spent" ] && out="$out ARENA-EXHAUSTED"
 
   # Operations that gave up. NOT the same as a crash and NOT the same as a low
