@@ -60,7 +60,27 @@ write_connection_conf() {
   echo "  compute: $compute_ips"
   echo "  memory:  $memory_ips"
   for n in "${COMPUTE_NODES[@]}" "${MEM_NODES[@]}"; do
-    ssh -n "w$n" "cat > $DLSM_DIR/connection.conf" <<< "$conf"
+    # NO -n HERE, and that is the whole point: -n redirects stdin from
+    # /dev/null, so `cat` on the far side reads nothing and the here-string is
+    # silently discarded. The file gets created, empty, and dLSM then starts
+    # with no idea which nodes exist. It wrote a 0-byte connection.conf on
+    # every node for as long as this function has existed.
+    #
+    # -n is used on every OTHER ssh in these scripts, to stop a backgrounded
+    # remote command from stealing the loop's stdin. This one needs stdin.
+    if ! ssh "w$n" "mkdir -p $DLSM_DIR && cat > $DLSM_DIR/connection.conf" <<< "$conf"; then
+      echo "[ERROR] could not write connection.conf on w$n" >&2
+      return 1
+    fi
+    # Verify rather than assume: an empty file here is the failure mode that
+    # cost a sweep arm, and it is invisible unless checked.
+    local n_bytes
+    n_bytes=$(ssh -n "w$n" "stat -c %s $DLSM_DIR/connection.conf 2>/dev/null || echo 0")
+    if [ "${n_bytes:-0}" -lt 2 ]; then
+      echo "[ERROR] connection.conf on w$n is $n_bytes bytes -- dLSM would start" >&2
+      echo "        with no node list. Refusing to continue." >&2
+      return 1
+    fi
   done
 }
 
