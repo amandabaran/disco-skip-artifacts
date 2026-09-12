@@ -1,0 +1,6 @@
+Running exp compare/e-20260912T143635Z/scan100/disco-skip: disco-skip-exe -w oops-workloade-scan100 -s 3 -c 1 -I 100000 -W 50000 --cache 1 --latency 1 --ts faa --maxrange 100 --vecs-per-client 2000000 --nodes-per-client 262144
+Setup 12 oops tmux............ ✓
+StartingSanitizing port 11211...
+Spawning isolated tmux registry...
+... (Waiting for servers to initialize).... ✓
+Running..............  ✓

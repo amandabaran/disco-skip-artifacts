@@ -57,6 +57,15 @@ ASYNC=${ASYNC:-1}
 # disco-skip arms matter; the log then omits the GET/PUT stats sections
 # entirely, so the choice is visible in the data rather than only here.
 LATENCY=${LATENCY:-1}
+# How many times to repeat the whole sweep.
+#
+# PAPER NUMBERS NEED 3. A single sweep is n=1 and run-to-run variation is up to
+# ~6% on the disco-skip arms -- and up to 17% on workload D at 2 clients, where
+# the `latest` skew concentrates writes and timing matters more. A margin under
+# that is not a result. Each repeat writes its own results directory; pass them
+# all to summarize.py and it reports mean +- half-range and marks anything
+# inside the noise band as NOISE rather than as a winner.
+REPEATS=${REPEATS:-1}
 
 # workload letter -> workload file. An explicit map, not string concatenation:
 # there is no oops-workloadd-uniform (it would be byte-identical to
@@ -70,6 +79,25 @@ declare -A WL=(
 )
 # Override to smoke a single workload: WORKLOADS=a ./ycsb-abcd.sh 2000 1000
 ORDER=(${WORKLOADS:-a b c d})
+
+# Repeats are separate RUNS, not an inner loop: each re-execs this script with
+# REPEATS=1 so it gets its own stamp, its own results directory and its own
+# fresh cluster setup. An inner loop sharing one directory would also share
+# whatever state the previous repeat left behind, which is the opposite of what
+# a repeat is for.
+if [ "${REPEATS:-1}" -gt 1 ]; then
+  reps=$REPEATS
+  dirs=()
+  for rep in $(seq 1 "$reps"); do
+    echo "################ repeat $rep of $reps ################"
+    REPEATS=1 "$0" "$@" || echo "repeat $rep failed; continuing"
+    dirs+=("$(ls -dt "$HERE"/results/abcd-* 2>/dev/null | head -1)")
+  done
+  echo
+  echo "All $reps repeats done. Summarise them TOGETHER -- one on its own is n=1:"
+  echo "  ./summarize.py ${dirs[*]/%//results.csv}"
+  exit 0
+fi
 
 STAMP=$(date -u +%Y%m%dT%H%M%SZ)
 OUT="$HERE/results/abcd-$STAMP"
@@ -117,11 +145,15 @@ run_arm() {
 
   printf "%-3s %-22s %8s %10s %7s %s\n" "$wl" "$label" "$nc" "$total" "$nlogs" \
       "$notes" | tee -a "$OUT/summary.txt"
-  echo "$wl,$label,$system,$SERVERS,$nc,$total,$nlogs,\"$percsv\",\"$notes\"" \
+  echo "$wl,$label,$system,$SERVERS,$nc,$total,$nlogs,\"$percsv\",\"$notes\",$ITER,$WARMUP,$ASYNC,$LATENCY" \
       >> "$OUT/results.csv"
 }
 
-echo "wl,system,binary,servers,clients,total_kops,nlogs,per_client_kops,notes" \
+# The run's parameters travel WITH the numbers. summarize.py can otherwise only
+# infer that two result sets are incomparable from an implausibly wide spread --
+# it caught a 100k-iter run averaged with a 5000-iter smoke that way, but only
+# after the fact and only because the spread happened to be large.
+echo "wl,system,binary,servers,clients,total_kops,nlogs,per_client_kops,notes,iter,warmup,async,latency" \
     > "$OUT/results.csv"
 
 for wl in "${ORDER[@]}"; do
@@ -140,3 +172,9 @@ done
 
 echo "" | tee -a "$OUT/summary.txt"
 echo "results -> $OUT" | tee -a "$OUT/summary.txt"
+if [ "${REPEATS:-1}" -le 1 ]; then
+  echo "NOTE: this is ONE run (n=1) and is not publishable on its own." \
+      | tee -a "$OUT/summary.txt"
+  echo "      Use REPEATS=3, then pass all three results.csv to summarize.py." \
+      | tee -a "$OUT/summary.txt"
+fi

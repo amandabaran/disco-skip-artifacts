@@ -24,11 +24,25 @@ import sys
 from collections import OrderedDict, defaultdict
 
 
+def params_of(row):
+    """The knobs that must match for two rows to be repeats of each other.
+
+    Recorded in the CSV since the REPEATS work; older files lack them, and are
+    treated as 'unknown' rather than as mismatched, so historical results still
+    summarise.
+    """
+    keys = ("iter", "warmup", "async", "latency")
+    if not any(k in row for k in keys):
+        return None
+    return tuple(row.get(k, "") for k in keys)
+
+
 def load(paths):
     """-> {(group, system): [kops, ...]}, {(group, system): note}, key_name."""
     vals = defaultdict(list)
     notes = {}
     key = None
+    seen_params = {}
     for path in paths:
         with open(path, newline="") as f:
             for r in csv.DictReader(f):
@@ -49,6 +63,18 @@ def load(paths):
                     notes[(group, r["system"])] = note
                     continue
                 vals[(group, r["system"])].append(kops)
+                pp = params_of(r)
+                if pp is not None:
+                    seen_params.setdefault(pp, []).append(path)
+    if len(seen_params) > 1:
+        print("*** REFUSING TO AVERAGE: these runs used different parameters.")
+        print("*** Averaging them is a blend of experiments, not a repeat.")
+        for pp, where in seen_params.items():
+            i, w, a, l = pp
+            print(f"      iter={i} warmup={w} async={a} latency={l}")
+            for f in sorted(set(where)):
+                print(f"        {f}")
+        sys.exit(2)
     return vals, notes, (key or "wl")
 
 

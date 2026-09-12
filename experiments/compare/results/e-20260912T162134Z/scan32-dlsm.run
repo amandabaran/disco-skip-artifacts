@@ -1,0 +1,13 @@
+=============================
+dLSM/YCSB: 20260912-125348_ycsb-e_uniform_t1c4_s32
+  workload/dist: ycsb-e / uniform
+  threads/coros: 1 / 4
+  scan len max:  1..32
+  memory nodes:  w1 w2 w3
+  compute nodes: w5
+=============================
+[1/5] Cleanup
+[2/5] Distribute connection.conf and start Server
+Writing connection.conf:
+  compute: 10.10.1.5
+  memory:  10.10.1.1 10.10.1.2 10.10.1.3

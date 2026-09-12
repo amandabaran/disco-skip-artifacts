@@ -1,0 +1,13 @@
+=============================
+dLSM/YCSB: 20260912-132500_ycsb-e_uniform_t1c4_s100
+  workload/dist: ycsb-e / uniform
+  threads/coros: 1 / 4
+  scan len max:  1..100
+  memory nodes:  w1 w2 w3
+  compute nodes: w5
+=============================
+[1/5] Cleanup
+./experiments/dlsm/run_ycsb.sh: line 108: en: command not found
+./experiments/dlsm/run_ycsb.sh: line 114: return: can only `return' from a function or sourced script
+./experiments/dlsm/run_ycsb.sh: line 115: syntax error near unexpected token `}'
+./experiments/dlsm/run_ycsb.sh: line 115: `}'

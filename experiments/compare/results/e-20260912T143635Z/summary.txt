@@ -1,0 +1,13 @@
+
+scanlen system               total_kops   nlogs notes
+
+8      disco-skip                   34       1 
+8      dlsm-ycsbc                    0       0 NO-TPUT-PARSED(tag=20260912-103742_ycsb-e_uniform_t1c4_s8)
+
+32     disco-skip                   27       1 
+32     dlsm-ycsbc                    0       0 NO-TPUT-PARSED(tag=20260912-110852_ycsb-e_uniform_t1c4_s32)
+
+100    disco-skip                   17       1 
+100    dlsm-ycsbc                    0       0 NO-TPUT-PARSED(tag=20260912-114007_ycsb-e_uniform_t1c4_s100)
+
+results -> /users/adb321/disco-skip-artifacts/experiments/compare/results/e-20260912T143635Z

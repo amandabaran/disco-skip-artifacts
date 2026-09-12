@@ -1,0 +1,5 @@
+ycsb-e  20260912T143635Z
+iter=100000 warmup=50000 servers=3 clients=1
+scan lengths: 8 32 100
+dlsm: mem=[1 2 3] compute=[5] threads=1
+NOTE: disco-skip runs --ts faa; a range needs the counter snapshot.

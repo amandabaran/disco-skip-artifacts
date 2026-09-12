@@ -44,11 +44,29 @@ ahead of us by 4% on workload D, which is inside the noise and must not be
 reported as a loss. Conversely the B and C margins (11–20%) survive it
 comfortably.
 
-Three runs is the minimum that lets you quote a mean with a visible spread.
-Use `REPEATS=3`, which writes each repetition to its own results directory and
-leaves `summarize.py` to aggregate them; pass several CSVs to
-`summarize.py` and it reports mean ± half-range across them rather than a
-single number.
+**Workload D is noisier still.** swarm-kv moved 17% at 2 clients between two
+runs (432 → 505), which flipped the comparison from a 1.02× win to a 1.15× loss.
+The `latest` skew concentrates writes on a few hot keys, so timing matters far
+more than it does on uniform workloads. A single global noise figure understates
+D; treat per-workload spread as the thing to report.
+
+Three runs is the minimum that lets you quote a mean with a visible spread:
+
+```sh
+REPEATS=3 ./ycsb-abcd.sh 100000 50000
+```
+
+Each repeat re-execs the script with `REPEATS=1`, so it gets its own stamp, its
+own results directory and its own fresh cluster setup — an inner loop sharing
+one directory would also share whatever the previous repeat left behind, which
+is the opposite of what a repeat is for. The command prints the exact
+`summarize.py` invocation for the three directories when it finishes.
+
+`summarize.py` then reports mean ± half-range and marks any margin inside the
+noise band as NOISE. It also **refuses to average runs with different
+parameters** — `iter`, `warmup`, `async` and `latency` are recorded in each CSV
+now, so a 100k-iter run combined with a 5000-iter smoke is rejected outright
+rather than inferred from an implausible spread after the fact.
 
 ## Three traps this harness exists to avoid
 
