@@ -19,6 +19,16 @@ set -uo pipefail
 
 BASE_DIR="/users/adb321/disco-skip-artifacts"
 DLSM_DIR="$BASE_DIR/bin/dlsm"
+# WHERE dLSM ACTUALLY READS ITS NODE LIST. Not $DLSM_DIR/connection.conf:
+# dLSM/util/rdma.h hardcodes
+#     static char config_file_name[100] = "../connection.conf";
+# and the binaries run with cwd = $DLSM_DIR, so the file it opens is one level
+# UP. send-deployment.sh has always known this -- it moves dlsm/connection.conf
+# to bin/connection.conf on unpack -- but these scripts wrote to the wrong path,
+# so dLSM kept reading a stale file listing SEVEN compute nodes while we started
+# one, and its startup barrier waited forever for six that were never coming.
+# The symptom was "Loading7" in the ycsbc log and then two hours of silence.
+DLSM_CONF="$(dirname "$DLSM_DIR")/connection.conf"
 GATEWAY_LOG_DIR="$(dirname "$(realpath "$0")")/../../logs/dlsm"
 
 # Overridable so a comparison can MATCH RESOURCES. Defaults are dLSM's own
@@ -80,16 +90,16 @@ write_connection_conf() {
     #
     # -n is used on every OTHER ssh in these scripts, to stop a backgrounded
     # remote command from stealing the loop's stdin. This one needs stdin.
-    if ! ssh "w$n" "mkdir -p $DLSM_DIR && cat > $DLSM_DIR/connection.conf" <<< "$conf"; then
+    if ! ssh "w$n" "mkdir -p $DLSM_DIR && cat > $DLSM_CONF" <<< "$conf"; then
       echo "[ERROR] could not write connection.conf on w$n" >&2
       return 1
     fi
     # Verify rather than assume: an empty file here is the failure mode that
     # cost a sweep arm, and it is invisible unless checked.
     local n_bytes
-    n_bytes=$(ssh -n "w$n" "stat -c %s $DLSM_DIR/connection.conf 2>/dev/null || echo 0")
+    n_bytes=$(ssh -n "w$n" "stat -c %s $DLSM_CONF 2>/dev/null || echo 0")
     if [ "${n_bytes:-0}" -lt 2 ]; then
-      echo "[ERROR] connection.conf on w$n is $n_bytes bytes -- dLSM would start" >&2
+      echo "[ERROR] $DLSM_CONF on w$n is $n_bytes bytes -- dLSM would start" >&2
       echo "        with no node list. Refusing to continue." >&2
       return 1
     fi
