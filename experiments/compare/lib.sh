@@ -80,13 +80,41 @@ total_kops() {
   echo "$total $parsed $percsv"
 }
 
-# Did any client hit a condition that voids the number?
-# Arena exhaustion is the one that matters: with no reclamation, a run that
-# outlives its stripe stops doing work and the tput is meaningless.
+# Did any client hit a condition that voids or qualifies the number?
+#
+# MATCH THE SIGNAL, NOT A WORD. This used to be `grep -i exhaust`, which was
+# always a loose proxy for arena exhaustion and became actively wrong the moment
+# the client started printing "N retry-budget exhausted" as a normal counter:
+# every disco-skip arm was flagged ARENA-EXHAUSTED, summarize.py excluded them
+# all as void, and an entire sweep's worth of good numbers disappeared from the
+# table. (The arena was at 144782 of 500000 -- 29%.) Same class of bug as the
+# `grep -c` that once flagged every arm in experiments/pipeline/sweep.sh: a
+# check that fails towards "void" is not safe just because it is conservative.
+#
+# So arena exhaustion is now read from the numbers the client prints:
+#   "vectors allocated:  144782 of 500000"
+# and only a stripe that is genuinely spent counts.
 run_warnings() {
   local dir=$1 out=""
-  grep -qil "exhaust" "$dir"/client*.txt 2>/dev/null && out="$out ARENA-EXHAUSTED"
+
+  # Arena: allocated vs capacity, per client, worst case.
+  local spent
+  spent=$(grep -ohE "vectors allocated: +[0-9]+ of [0-9]+" "$dir"/client*.txt 2>/dev/null \
+          | awk '{ if ($4 >= $6 * 0.98) print "spent" }' | head -1)
+  [ -n "$spent" ] && out="$out ARENA-EXHAUSTED"
+
+  # Operations that gave up. NOT the same as a crash and NOT the same as a low
+  # number: the run completed, but the throughput counts unresolved operations
+  # as done, so it overstates useful work. Flagged separately so it can be
+  # judged rather than silently averaged -- see the workload-D 8-client arm.
+  grep -qF "DID NOT RESOLVE" "$dir"/client*.txt 2>/dev/null \
+      && out="$out UNRESOLVED-OPS"
+
   grep -qiE "terminate|what\(\):|Segmentation|Unrecognized token" "$dir"/client*.txt 2>/dev/null \
       && out="$out CRASH-OR-BAD-ARGS"
   echo "$out"
 }
+
+# (Re-deriving notes for an already-finished sweep lives in rescan-notes.py:
+#  the nested quoting needed to do it in shell was its own source of bugs.)
+
