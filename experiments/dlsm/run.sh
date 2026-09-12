@@ -108,9 +108,11 @@ echo "[3/6] Start Server on memory nodes"
 for i in "${!MEM_NODES[@]}"; do
   m="${MEM_NODES[$i]}"
   node_id=$i     # dLSM memory nodes numbered from 0
-  ssh -n "w$m" "cd $DLSM_DIR && \
-                nohup ./Server $DLSM_PORT $MEM_SIZE_GB $node_id \
-                > $DLSM_DIR/server.log 2>&1 &"
+  # -f: see the note in run_ycsb.sh. A backgrounded long-running process keeps
+  # ssh's channel open, so the plain `nohup ... &` form never returns.
+  ssh -f -n "w$m" "cd $DLSM_DIR && \
+                ./Server $DLSM_PORT $MEM_SIZE_GB $node_id \
+                > $DLSM_DIR/server.log 2>&1"
   echo "  w$m: ./Server $DLSM_PORT $MEM_SIZE_GB $node_id"
 done
 
@@ -136,8 +138,9 @@ for i in "${!COMPUTE_NODES[@]}"; do
   n="${COMPUTE_NODES[$i]}"
   cn_id=$i      # compute_node_id starts at 0
   log="db_bench_${RUN_TAG}_w${n}.log"
-  ssh -n "w$n" "cd $DLSM_DIR && \
-                nohup numactl --interleave=all \
+  # -f: see the note in run_ycsb.sh.
+  ssh -f -n "w$n" "cd $DLSM_DIR && \
+                numactl --interleave=all \
                 ./db_bench --benchmarks=$BENCHMARK \
                            --threads=$THREADS \
                            --value_size=$VALUE_SIZE \
@@ -146,7 +149,7 @@ for i in "${!COMPUTE_NODES[@]}"; do
                            --readwritepercent=$RWPCT \
                            --compute_node_id=$cn_id \
                            --fixed_compute_shards_num=0 \
-                > $DLSM_DIR/$log 2>&1 &"
+                > $DLSM_DIR/$log 2>&1"
   echo "  w$n: db_bench compute_node_id=$cn_id → $log"
   sleep 1
 done

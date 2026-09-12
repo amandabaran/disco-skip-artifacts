@@ -122,8 +122,25 @@ echo "[2/5] Distribute connection.conf and start Server"
 write_connection_conf || exit 1
 for i in "${!MEM_NODES[@]}"; do
   m="${MEM_NODES[$i]}"
-  ssh -n "w$m" "cd $DLSM_DIR && nohup ./Server $DLSM_PORT $MEM_SIZE_GB $i \
-                > $DLSM_DIR/server.log 2>&1 &"
+  # -f, NOT `nohup ... &`. ssh waits for the session's channel to close, and a
+  # backgrounded long-running process keeps it open -- so the plain form HANGS
+  # FOREVER even though the process starts correctly. Measured: the current form
+  # returns 124 under `timeout 15`, and so does setsid + </dev/null + disown.
+  # -f backgrounds ssh itself just before command execution, which is what it
+  # exists for, and returns 0 immediately with the process running.
+  #
+  # This is why every dLSM arm of the workload-E sweep died after printing
+  # "Distribute connection.conf and start Server" and nothing more: the next
+  # line never ran, so there was no error to see.
+  # STDOUT TO /dev/null, STDERR TO THE LOG. dLSM's Server narrates every shard
+  # range and memory-pool allocation on stdout: measured at 9.2 GB for a single
+  # arm. It is truncated on each start so it does not accumulate, but 9 GB of
+  # writes per arm is real I/O contention against the thing being measured, on
+  # the same nodes serving RDMA. Keeping stderr means a startup failure is still
+  # visible to the `tail` in the readiness check below, which is the only thing
+  # that ever read this file.
+  ssh -f -n "w$m" "cd $DLSM_DIR && ./Server $DLSM_PORT $MEM_SIZE_GB $i \
+                > /dev/null 2> $DLSM_DIR/server.log"
   echo "  w$m: Server $DLSM_PORT $MEM_SIZE_GB $i"
 done
 
@@ -151,10 +168,11 @@ for n in "${COMPUTE_NODES[@]}"; do
   # gateway does nothing -- ssh does not forward arbitrary env by default -- so
   # every arm of a scan-length sweep would silently run at the upstream default
   # of 100 and the sweep would be four copies of one measurement.
-  ssh -n "w$n" "cd $DLSM_DIR && DLSM_SCAN_LEN_MAX=$DLSM_SCAN_LEN_MAX \
-                nohup numactl --interleave=all \
+  # -f for the same reason as the Server launch above.
+  ssh -f -n "w$n" "cd $DLSM_DIR && DLSM_SCAN_LEN_MAX=$DLSM_SCAN_LEN_MAX \
+                numactl --interleave=all \
                 ./ycsbc $THREADS $COROUTINES $WORKLOAD $DISTRIBUTION \
-                > $DLSM_DIR/$log 2>&1 &"
+                > $DLSM_DIR/$log 2>&1"
   echo "  w$n: ycsbc $THREADS $COROUTINES $WORKLOAD $DISTRIBUTION"
 done
 
