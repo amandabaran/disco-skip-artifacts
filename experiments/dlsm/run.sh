@@ -82,6 +82,16 @@ write_connection_conf() {
       return 1
     fi
   done
+  # EXPLICIT, and not decoration. A bash function returns the status of its LAST
+  # executed command, and that is now the size check above -- which is FALSE
+  # whenever the file is the right size, so without this the function returned
+  # failure exactly when it succeeded. `write_connection_conf || exit 1` then
+  # killed the run silently, with no error line, because no echo was reached.
+  #
+  # Introduced by the verification check itself: before it, the last command was
+  # the ssh, which returns 0 on success. Adding a check at the end of a function
+  # changes what that function returns.
+  return 0
 }
 
 # --- 1. Cleanup any prior processes ----------------------------------------
