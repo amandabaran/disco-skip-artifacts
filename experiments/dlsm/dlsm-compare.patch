@@ -1,0 +1,116 @@
+# The deliberate modifications to the dLSM source tree.
+#
+# dLSM/ is untracked here (13 MB of third-party source), so changes made in
+# place are lost on a re-clone -- and both of these are load-bearing for the
+# workload-E comparison, so losing them silently reverts the comparison to
+# something that is not one. Apply from the dLSM checkout root:
+#
+#     cd dLSM && patch -p1 < ../experiments/dlsm/dlsm-compare.patch
+#     ../bin/dlsm/build.sh build
+#
+# TWO HUNKS, both making a hardcoded constant env-configurable, both defaulting
+# to the upstream value so an unset build is byte-for-byte upstream behaviour.
+#
+# 1. include/util/ycsb.h -- DLSM_SCAN_LEN_MAX
+#    The uniform scan length was hardcoded 1..100. Our oops-workloade-* files
+#    set maxscanlength, and comparing 1..8 scans against 1..100 (mean ~50 vs
+#    ~4.5) is not a comparison. Capped at 255: Record::scan_len is an 8-bit
+#    bitfield.
+#
+# 2. benchmarks/ycsbc.cc -- DLSM_PRELOAD_OPS / DLSM_TRAN_OPS
+#    Preload and transaction counts were hardcoded at 1e9 / 1e8, dLSM's paper
+#    scale. Two problems on this testbed. It CRASHES: the memory node registers
+#    RDMA memory in 1 GB chunks and pins it, `ulimit -l` is ~1.95 GB with the
+#    hard limit equal to the soft one, so the Server dies mid-run with
+#    "ibv_reg_mr failed ... region num = 4" -- and, being launched detached,
+#    that surfaces only as the client hanging with no error. And it is NOT A
+#    COMPARISON: the system being compared against runs recordcount=100000 /
+#    operationcount=1000000, so the defaults preload 10,000x more keys, which
+#    measures a different experiment rather than a faster one.
+#
+# If dLSM is re-pulled, these are the hunks to reapply. Anything else in dLSM/
+# should still be treated as off-limits -- see bin/dlsm/build.sh.
+--- a/benchmarks/ycsbc.cc	2026-09-12 17:09:54.997118305 -0400
++++ b/benchmarks/ycsbc.cc	2026-09-12 16:58:57.009604695 -0400
+@@ -4,6 +4,7 @@
+ #include <sys/types.h>
+ #include <atomic>
+ #include <cstdio>
++#include <cstdlib>
+ #include <fstream>
+ 
+ #include "TimberSaw/cache.h"
+@@ -577,8 +578,27 @@
+     TimberSaw::RDMA_Manager::node_id = COMPUTE_ID + 1;
+     load_count.store(0);
+     finish_thread_count.store(0);
+-    perload_ops = 1000000000;
+-    tran_ops = 100000000;
++    // WORKLOAD SIZE, env-configurable. Upstream hardcodes 1e9 preload and 1e8
++    // transactions -- dLSM's paper scale. Two problems on this testbed:
++    //
++    //  * IT CRASHES. The memory node registers RDMA memory in 1 GB chunks and
++    //    pins them; `ulimit -l` here is ~1.95 GB with the hard limit equal to
++    //    the soft one, so the Server dies mid-run with
++    //      ibv_reg_mr failed ... region num = 4
++    //    and, being launched detached, shows up only as the client hanging.
++    //
++    //  * IT IS NOT A COMPARISON. The system being compared against runs
++    //    recordcount=100000 / operationcount=1000000. Preloading 10,000x more
++    //    keys measures a different experiment, not a faster one.
++    //
++    // Defaults are unchanged, so an unset build is upstream. Same approach as
++    // DLSM_SCAN_LEN_MAX above.
++    {
++      const char *pl = ::getenv("DLSM_PRELOAD_OPS");
++      const char *tr = ::getenv("DLSM_TRAN_OPS");
++      perload_ops = pl ? ::strtoull(pl, nullptr, 10) : 1000000000;
++      tran_ops = tr ? ::strtoull(tr, nullptr, 10) : 100000000;
++    }
+ 
+     if(!loadKeysFromFile("entry.data")) {
+         saveKeysToFile("entry.data");
+--- a/include/util/ycsb.h	2026-09-12 17:09:54.997118305 -0400
++++ b/include/util/ycsb.h	2026-09-11 14:58:13.000870537 -0400
+@@ -25,6 +25,7 @@
+ #ifndef SDS_YCSB_H
+ #define SDS_YCSB_H
+ 
++#include <cstdlib>
+ #include "generator.h"
+ 
+ namespace sds {
+@@ -41,8 +42,32 @@
+ 
+         class WorkloadBuilder {
+         public:
++            // Upper bound of the uniform scan length, inclusive.
++            //
++            // UPSTREAM HARDCODES 100. It is env-configurable here so that a
++            // scan-length sweep can put dLSM and a comparison system on the
++            // SAME lengths -- otherwise a 1..100 scan (mean ~50) is compared
++            // against whatever the other side's maxscanlength happens to be,
++            // and workload E becomes incomparable rather than merely noisy.
++            //
++            // Unset, this returns 100 and behaviour is identical to upstream,
++            // which is the point: cloudlab_deploy.sh keeps dLSM
++            // upstream-unmodified, so the deviation is opt-in and invisible
++            // until DLSM_SCAN_LEN_MAX is exported.
++            //
++            // Capped at 255 because Record::scan_len is an 8-bit bitfield
++            // (see the struct above); a larger bound would silently truncate.
++            static size_t ScanLenMax() {
++                const char *e = ::getenv("DLSM_SCAN_LEN_MAX");
++                if (e == nullptr) return 100;
++                long v = ::strtol(e, nullptr, 10);
++                if (v < 1) v = 1;
++                if (v > 255) v = 255;
++                return static_cast<size_t>(v);
++            }
++
+             WorkloadBuilder(size_t initial_elements, size_t insert_elements, int *percentage, const std::string &key_dist, double zipfian_const)
+-                    : insert_key(0), scan_len(1, 100) {
++                    : insert_key(0), scan_len(1, ScanLenMax()) {
+                 for (int i = 0; i <= READMODIFYWRITE; ++i) {
+                     op_type.addValue((OpType) i, percentage[i]);
+                 }

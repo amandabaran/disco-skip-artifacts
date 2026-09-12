@@ -45,10 +45,34 @@ DISTRIBUTION="${2:-zipfian}"     # zipfian | uniform
 THREADS="${3:-4}"
 COROUTINES="${COROUTINES:-4}"
 DLSM_PORT="${DLSM_PORT:-19843}"
-MEM_SIZE_GB="${MEM_SIZE_GB:-64}"
+# Gigabytes of RDMA-registered memory per memory node.
+#
+# NOT 64, which is what this defaulted to and which CRASHES. The Server
+# registers in 1 GB chunks and pins them; these nodes have 15 GB of RAM and
+# `ulimit -l` of ~1.95 GB, so it dies partway:
+#
+#   ibv_reg_mr failed with mr_flags=0x7, size = 1073741824, region num = 4
+#   memory registering failed by size of 0x40000000
+#   Segmentation fault (core dumped)
+#
+# -- and because the Server is launched detached, the crash appeared only as
+# ycsbc hanging later with no explanation. Measured on w1: 1, 2 and 4 GB all
+# start clean; 64 fails at the fifth region. 4 gives a 12 GB pool across three
+# memory nodes, which is ample for these workloads.
+MEM_SIZE_GB="${MEM_SIZE_GB:-4}"
 # Upper bound of ycsbc's uniform scan length. 100 is upstream's hardcoded value,
 # so leaving this unset reproduces an unmodified dLSM. See bin/dlsm/build.sh.
 DLSM_SCAN_LEN_MAX="${DLSM_SCAN_LEN_MAX:-100}"
+# Workload size, matched to the system being compared against.
+#
+# ycsbc hardcodes 1e9 preload / 1e8 transactions -- dLSM's paper scale. On this
+# testbed that CRASHES the memory node (RDMA pins memory; ulimit -l is ~1.95 GB
+# and cannot be raised without root), and it would not be a comparison anyway:
+# oops-workloade-* uses recordcount=100000 / operationcount=1000000, so the
+# defaults preload 10,000x more keys. Matching them is the same reasoning as
+# matching scan lengths.
+DLSM_PRELOAD_OPS="${DLSM_PRELOAD_OPS:-100000}"
+DLSM_TRAN_OPS="${DLSM_TRAN_OPS:-1000000}"
 
 RUN_TAG="$(date +%Y%m%d-%H%M%S)_${WORKLOAD}_${DISTRIBUTION}_t${THREADS}c${COROUTINES}_s${DLSM_SCAN_LEN_MAX}"
 mkdir -p "$GATEWAY_LOG_DIR"
@@ -58,6 +82,7 @@ echo "dLSM/YCSB: $RUN_TAG"
 echo "  workload/dist: $WORKLOAD / $DISTRIBUTION"
 echo "  threads/coros: $THREADS / $COROUTINES"
 echo "  scan len max:  1..$DLSM_SCAN_LEN_MAX"
+echo "  preload/tran:  $DLSM_PRELOAD_OPS / $DLSM_TRAN_OPS"
 echo "  memory nodes:  ${MEM_NODES[*]/#/w}"
 echo "  compute nodes: ${COMPUTE_NODES[*]/#/w}"
 echo "============================="
@@ -180,6 +205,7 @@ for n in "${COMPUTE_NODES[@]}"; do
   # of 100 and the sweep would be four copies of one measurement.
   # -f for the same reason as the Server launch above.
   ssh -f -n "w$n" "cd $DLSM_DIR && DLSM_SCAN_LEN_MAX=$DLSM_SCAN_LEN_MAX \
+                DLSM_PRELOAD_OPS=$DLSM_PRELOAD_OPS DLSM_TRAN_OPS=$DLSM_TRAN_OPS \
                 numactl --interleave=all \
                 ./ycsbc $THREADS $COROUTINES $WORKLOAD $DISTRIBUTION \
                 > $DLSM_DIR/$log 2>&1"

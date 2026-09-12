@@ -34,7 +34,21 @@ NUM_KEYS="${NUM_KEYS:-20000000}"      # 100M paper total / 5 compute nodes
 BLOOM_BITS="${BLOOM_BITS:-10}"
 RWPCT="${RWPCT:-5}"
 DLSM_PORT="${DLSM_PORT:-19843}"
-MEM_SIZE_GB="${MEM_SIZE_GB:-64}"      # per Server arg 2
+# Gigabytes of RDMA-registered memory per memory node.
+#
+# NOT 64, which is what this defaulted to and which CRASHES. The Server
+# registers in 1 GB chunks and pins them; these nodes have 15 GB of RAM and
+# `ulimit -l` of ~1.95 GB, so it dies partway:
+#
+#   ibv_reg_mr failed with mr_flags=0x7, size = 1073741824, region num = 4
+#   memory registering failed by size of 0x40000000
+#   Segmentation fault (core dumped)
+#
+# -- and because the Server is launched detached, the crash appeared only as
+# ycsbc hanging later with no explanation. Measured on w1: 1, 2 and 4 GB all
+# start clean; 64 fails at the fifth region. 4 gives a 12 GB pool across three
+# memory nodes, which is ample for these workloads.
+MEM_SIZE_GB="${MEM_SIZE_GB:-4}"      # per Server arg 2
 
 RUN_TAG="$(date +%Y%m%d-%H%M%S)_${BENCHMARK//,/+}_t${THREADS}"
 mkdir -p "$GATEWAY_LOG_DIR"
